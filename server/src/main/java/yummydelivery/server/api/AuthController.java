@@ -6,7 +6,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import yummydelivery.server.dto.JwtResponseDTO;
 import yummydelivery.server.dto.ResponseDTO;
+import yummydelivery.server.dto.SignInDTO;
 import yummydelivery.server.dto.SignUpDTO;
 import yummydelivery.server.service.AuthService;
 
@@ -23,7 +25,7 @@ public class AuthController {
         this.authService = authService;
     }
 
-    @PostMapping("/register")
+    @PostMapping("/auth/register")
     public ResponseEntity<ResponseDTO<Object>> signUpUser(@Valid @RequestBody SignUpDTO signUpDTO,
                                                           BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -39,9 +41,7 @@ public class AuthController {
                                     .build()
                     );
         }
-
         authService.signUpUser(signUpDTO);
-
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(
@@ -53,4 +53,21 @@ public class AuthController {
                 );
     }
 
+    @PostMapping("/auth/login")
+    public ResponseEntity<ResponseDTO<JwtResponseDTO>> signInUser(@Valid @RequestBody SignInDTO signInDTO) {
+
+        String token = authService.signInUser(signInDTO);
+        JwtResponseDTO jwtResponseDTO = new JwtResponseDTO(token, "Bearer");
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(
+                        ResponseDTO
+                                .<JwtResponseDTO>builder()
+                                .statusCode(HttpStatus.OK.value())
+                                .content(jwtResponseDTO)
+                                .message("User logged successfully")
+                                .build()
+                );
+    }
 }

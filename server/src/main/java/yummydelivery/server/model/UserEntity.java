@@ -6,12 +6,15 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
+@Data
 @Builder
 @Table(name = "users")
 @Entity
@@ -33,11 +36,20 @@ public class UserEntity {
     @NotNull(message = "Email is required")
     private String email;
 
+    @Builder.Default
+    private boolean enabled = true;
+    @Builder.Default
+    private boolean locked = false;
+    @Builder.Default
+    private boolean accountExpired = false;
+    @Builder.Default
+    private boolean credentialsExpired = false;
+
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "user_addresses",
-             joinColumns = @JoinColumn(name = "user_id"),
-             inverseJoinColumns = @JoinColumn(name = "address_id"))
-    private List<AddressEntity> addresses;
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "address_id"))
+    private List<AddressEntity> addresses = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "users_orders",
@@ -49,5 +61,5 @@ public class UserEntity {
     @JoinTable(name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private List<RoleEntity> roles = new ArrayList<>();
+    private Set<RoleEntity> roles = new HashSet<>();
 }

@@ -1,0 +1,23 @@
+app:
+  jwtSecret: ${JWT_SECRET_KEY}
+  jwtExpirationMs: 600000
+logging:
+  level:
+    org:
+      springframework:
+        security: TRACE
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    password: ${DB_PASSWORD}
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        show_sql: true
