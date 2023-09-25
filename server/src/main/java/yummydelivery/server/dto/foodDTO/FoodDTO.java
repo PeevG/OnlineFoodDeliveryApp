@@ -1,7 +1,7 @@
-package yummydelivery.server.dto;
+package yummydelivery.server.dto.foodDTO;
 
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotNull;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,18 +14,12 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-public class UpdateFoodDTO {
-    @NotNull(message = "Name is required")
+public class FoodDTO {
+    private Long id;
     private String name;
-
-    @NotNull(message = "Weight is required")
     private int weight;
-
-    @NotNull
-    @DecimalMin(value = "0.0", inclusive = false, message = "Price is required and must be greater than 0")
     private double price;
-
-    @NotNull
+    @Enumerated(EnumType.ORDINAL)
     private FoodTypeEnum foodTypeEnum;
     private String imageURL;
     private List<String> ingredients;

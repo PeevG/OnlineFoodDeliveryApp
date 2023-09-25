@@ -6,10 +6,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import yummydelivery.server.dto.AddFoodDTO;
-import yummydelivery.server.dto.FoodDTO;
+import yummydelivery.server.dto.foodDTO.AddFoodDTO;
+import yummydelivery.server.dto.foodDTO.FoodDTO;
 import yummydelivery.server.dto.ResponseDTO;
-import yummydelivery.server.dto.UpdateFoodDTO;
+import yummydelivery.server.dto.foodDTO.UpdateFoodDTO;
 import yummydelivery.server.service.FoodService;
 
 import java.util.List;
