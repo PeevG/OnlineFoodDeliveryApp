@@ -1,23 +1,18 @@
-package yummydelivery.server.model;
+package yummydelivery.server.dto.BeverageDTO;
 
-import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-@Table(name = "beverages")
-@Entity
-@Builder
-public class BeverageEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class AddOrUpdateBeverageDTO {
     @NotNull(message = "Name is required")
     private String name;
     @NotNull(message = "Milliliters field is required")
@@ -26,5 +21,4 @@ public class BeverageEntity {
     @NotNull
     @DecimalMin(value = "0.0", inclusive = false, message = "Price is required and must be greater than 0")
     private double price;
-
 }

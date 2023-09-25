@@ -9,13 +9,11 @@ import yummydelivery.server.dto.foodDTO.UpdateFoodDTO;
 import yummydelivery.server.enums.FoodTypeEnum;
 import yummydelivery.server.exceptions.ApiException;
 import yummydelivery.server.exceptions.FoodNotFoundException;
-import yummydelivery.server.exceptions.UnauthorizedException;
-import yummydelivery.server.exceptions.UserNotFoundException;
 import yummydelivery.server.model.FoodEntity;
-import yummydelivery.server.model.UserEntity;
 import yummydelivery.server.repository.FoodRepository;
 import yummydelivery.server.repository.UserRepository;
-import yummydelivery.server.security.IAuthenticationFacade;
+import yummydelivery.server.security.AuthenticationFacade;
+
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,10 +23,11 @@ import java.util.stream.Collectors;
 public class FoodService {
     private final FoodRepository foodRepository;
     private final ModelMapper modelMapper;
-    private final IAuthenticationFacade authenticationFacade;
+    private final AuthenticationFacade authenticationFacade;
     private final UserRepository userRepository;
 
-    public FoodService(FoodRepository foodRepository, ModelMapper modelMapper, IAuthenticationFacade authenticationFacade, UserRepository userRepository) {
+    public FoodService(FoodRepository foodRepository, ModelMapper modelMapper,
+                       AuthenticationFacade authenticationFacade, UserRepository userRepository) {
         this.foodRepository = foodRepository;
         this.modelMapper = modelMapper;
         this.authenticationFacade = authenticationFacade;
@@ -44,7 +43,7 @@ public class FoodService {
 
     public void addFood(AddFoodDTO addFoodDTO) {
 
-        checkIfUserIsAuthorized();
+        authenticationFacade.checkIfUserIsAuthorized();
 
         FoodEntity foodEntity = modelMapper.map(addFoodDTO, FoodEntity.class);
         foodRepository.save(foodEntity);
@@ -64,7 +63,7 @@ public class FoodService {
 
     public void deleteFood(Long id) {
 
-        checkIfUserIsAuthorized();
+        authenticationFacade.checkIfUserIsAuthorized();
 
         if (!foodRepository.existsById(id)) {
             throw new FoodNotFoundException(HttpStatus.NOT_FOUND, "Food with id " + id + " not found");
@@ -74,7 +73,7 @@ public class FoodService {
 
     public void updateFood(Long id, UpdateFoodDTO updateFoodDTO) {
 
-        checkIfUserIsAuthorized();
+        authenticationFacade.checkIfUserIsAuthorized();
 
         if (!foodRepository.existsById(id)) {
             throw new FoodNotFoundException(HttpStatus.NOT_FOUND, "Food with id " + id + " not found");
@@ -87,16 +86,5 @@ public class FoodService {
         foodEntity.setImageURL(updateFoodDTO.getImageURL());
         foodEntity.setIngredients(updateFoodDTO.getIngredients());
         foodRepository.save(foodEntity);
-    }
-
-    private void checkIfUserIsAuthorized() {
-        String username = authenticationFacade.getAuthentication().getName();
-        UserEntity currentUser = userRepository
-                .findByEmail(username)
-                .orElseThrow(() -> new UserNotFoundException(HttpStatus.NOT_FOUND, "User not found"));
-        String userRole = currentUser.getRoles().stream().map(r -> r.getName().name()).findFirst().get();
-        if (!userRole.equals("ADMIN")) {
-            throw new UnauthorizedException(HttpStatus.UNAUTHORIZED, "You are not authorized for this operation");
-        }
     }
 }

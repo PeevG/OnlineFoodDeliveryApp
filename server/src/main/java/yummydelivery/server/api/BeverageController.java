@@ -6,44 +6,42 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import yummydelivery.server.dto.foodDTO.AddFoodDTO;
-import yummydelivery.server.dto.foodDTO.FoodDTO;
+import yummydelivery.server.dto.BeverageDTO.AddOrUpdateBeverageDTO;
+import yummydelivery.server.dto.BeverageDTO.BeverageDTO;
 import yummydelivery.server.dto.ResponseDTO;
-import yummydelivery.server.dto.foodDTO.UpdateFoodDTO;
-import yummydelivery.server.service.FoodService;
+import yummydelivery.server.service.BeverageService;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 import static yummydelivery.server.config.ApplicationConstants.API_BASE;
 
-@RestController()
-@RequestMapping(API_BASE + "/foods")
-public class FoodController {
-    private final FoodService foodService;
+@RestController
+@RequestMapping(API_BASE + "/beverages")
+public class BeverageController {
+    private final BeverageService beverageService;
 
-    public FoodController(FoodService foodService) {
-        this.foodService = foodService;
+    public BeverageController(BeverageService beverageService) {
+        this.beverageService = beverageService;
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResponseDTO<FoodDTO>> getFoodById(@PathVariable Long id) {
-        FoodDTO foodDTO = foodService.getFood(id);
+    public ResponseEntity<ResponseDTO<BeverageDTO>> getBeverageById(@PathVariable Long id) {
+        BeverageDTO beverageDTO = beverageService.getBeverage(id);
+
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(
                         ResponseDTO
-                                .<FoodDTO>builder()
+                                .<BeverageDTO>builder()
                                 .statusCode(HttpStatus.OK.value())
-                                .message("Food '" + foodDTO.getName() + "' is returned.")
-                                .content(foodDTO)
+                                .content(beverageDTO)
                                 .build()
                 );
     }
 
-    @PostMapping()
-    public ResponseEntity<ResponseDTO<Void>> addFood(@Valid @RequestBody AddFoodDTO addFoodDTO,
-                                                     BindingResult bindingResult) {
+    @PostMapping
+    public ResponseEntity<ResponseDTO<Void>> addBeverage(@Valid @RequestBody AddOrUpdateBeverageDTO addBeverageDTO,
+                                                         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             String errors = bindingResult
                     .getAllErrors()
@@ -60,56 +58,28 @@ public class FoodController {
                                     .build()
                     );
         }
-        foodService.addFood(addFoodDTO);
+        beverageService.addBeverage(addBeverageDTO);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(
                         ResponseDTO
                                 .<Void>builder()
                                 .statusCode(HttpStatus.CREATED.value())
-                                .message(addFoodDTO.getName() + " was added successfully")
-                                .build()
-                );
-    }
-
-    @GetMapping()
-    public ResponseEntity<ResponseDTO<List<FoodDTO>>> getFoodsByType(@RequestParam String foodType) {
-        List<FoodDTO> foodsByType = foodService.getAllFoodsByType(foodType);
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(
-                        ResponseDTO
-                                .<List<FoodDTO>>builder()
-                                .statusCode(HttpStatus.OK.value())
-                                .content(foodsByType)
-                                .build()
-                );
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ResponseDTO<Void>> deleteFood(@PathVariable Long id) {
-        foodService.deleteFood(id);
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(
-                        ResponseDTO
-                                .<Void>builder()
-                                .statusCode(HttpStatus.OK.value())
-                                .message("Food with id " + id + " was deleted successfully")
+                                .message(addBeverageDTO.getName() + " was added successfully")
                                 .build()
                 );
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<ResponseDTO<Void>> updateFood(@PathVariable Long id,
-                                                        @Valid @RequestBody UpdateFoodDTO updateFoodDTO,
-                                                        BindingResult bindingResult) {
+    public ResponseEntity<ResponseDTO<Void>> updateBeverage(@PathVariable Long id,
+                                                            @Valid @RequestBody AddOrUpdateBeverageDTO dto,
+                                                            BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             String errors = bindingResult
                     .getAllErrors()
                     .stream()
                     .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                    .collect(Collectors.joining(";"));
+                    .collect(Collectors.joining("; "));
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body(
@@ -120,13 +90,28 @@ public class FoodController {
                                     .build()
                     );
         }
-        foodService.updateFood(id, updateFoodDTO);
+        beverageService.updateBeverage(id, dto);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(
+                        ResponseDTO
+                                .<Void>builder()
+                                .statusCode(HttpStatus.CREATED.value())
+                                .message("Beverage with id " + id + " was updated successfully")
+                                .build()
+                );
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ResponseDTO<Void>> deleteBeverage(@PathVariable Long id) {
+        beverageService.deleteBeverage(id);
+
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(
                         ResponseDTO
                                 .<Void>builder()
-                                .message("Food with id " + id + " was updated successfully")
+                                .message("Beverage with id " + id + " was deleted successfully")
                                 .statusCode(HttpStatus.OK.value())
                                 .build()
                 );

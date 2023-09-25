@@ -6,4 +6,6 @@ import org.springframework.stereotype.Component;
 
 public interface IAuthenticationFacade {
     Authentication getAuthentication();
+
+    void checkIfUserIsAuthorized();
 }
