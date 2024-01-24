@@ -10,6 +10,7 @@ import yummydelivery.server.dto.BeverageDTO.AddOrUpdateBeverageDTO;
 import yummydelivery.server.dto.BeverageDTO.BeverageDTO;
 import yummydelivery.server.dto.ResponseDTO;
 import yummydelivery.server.service.BeverageService;
+import yummydelivery.server.service.FoodService;
 
 import java.util.stream.Collectors;
 
@@ -19,9 +20,11 @@ import static yummydelivery.server.config.ApplicationConstants.API_BASE;
 @RequestMapping(API_BASE + "/beverages")
 public class BeverageController {
     private final BeverageService beverageService;
+    private final FoodService foodService;
 
-    public BeverageController(BeverageService beverageService) {
+    public BeverageController(BeverageService beverageService, FoodService foodService) {
         this.beverageService = beverageService;
+        this.foodService = foodService;
     }
 
     @GetMapping("/{id}")
@@ -34,7 +37,7 @@ public class BeverageController {
                         ResponseDTO
                                 .<BeverageDTO>builder()
                                 .statusCode(HttpStatus.OK.value())
-                                .content(beverageDTO)
+                                .body(beverageDTO)
                                 .build()
                 );
     }
@@ -65,7 +68,7 @@ public class BeverageController {
                         ResponseDTO
                                 .<Void>builder()
                                 .statusCode(HttpStatus.CREATED.value())
-                                .message(addBeverageDTO.getName() + " was added successfully")
+                                .message(addBeverageDTO.getName() + " is added successfully")
                                 .build()
                 );
     }
@@ -97,21 +100,20 @@ public class BeverageController {
                         ResponseDTO
                                 .<Void>builder()
                                 .statusCode(HttpStatus.CREATED.value())
-                                .message("Beverage with id " + id + " was updated successfully")
+                                .message("Beverage with id " + id + " is updated successfully")
                                 .build()
                 );
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponseDTO<Void>> deleteBeverage(@PathVariable Long id) {
-        beverageService.deleteBeverage(id);
-
+        foodService.deleteFoodOrBeverage(id);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(
                         ResponseDTO
                                 .<Void>builder()
-                                .message("Beverage with id " + id + " was deleted successfully")
+                                .message("Beverage with id " + id + " is deleted successfully")
                                 .statusCode(HttpStatus.OK.value())
                                 .build()
                 );

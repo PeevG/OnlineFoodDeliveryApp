@@ -51,6 +51,9 @@ public class UserEntity {
             inverseJoinColumns = @JoinColumn(name = "address_id"))
     private List<AddressEntity> addresses = new ArrayList<>();
 
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private ShoppingCartEntity cart = new ShoppingCartEntity();
+
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "users_orders",
             joinColumns = @JoinColumn(name = "user_id"),

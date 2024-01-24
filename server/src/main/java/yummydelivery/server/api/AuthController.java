@@ -65,7 +65,7 @@ public class AuthController {
                         ResponseDTO
                                 .<JwtResponseDTO>builder()
                                 .statusCode(HttpStatus.OK.value())
-                                .content(jwtResponseDTO)
+                                .body(jwtResponseDTO)
                                 .message("User logged successfully")
                                 .build()
                 );

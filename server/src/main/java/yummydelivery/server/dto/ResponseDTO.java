@@ -11,6 +11,6 @@ import lombok.*;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ResponseDTO<T> {
     private int statusCode;
-    private T content;
+    private T body;
     private String message;
 }

@@ -1,5 +1,6 @@
 package yummydelivery.server.dto.foodDTO;
 
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -21,7 +22,7 @@ public class AddFoodDTO {
     private String name;
 
     @NotNull(message = "Weight is required")
-    private int weight;
+    private int grams;
 
     @NotNull
     @DecimalMin(value = "0.0", inclusive = false, message = "Price is required and must be greater than 0")

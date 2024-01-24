@@ -19,7 +19,7 @@ public class UpdateFoodDTO {
     private String name;
 
     @NotNull(message = "Weight is required")
-    private int weight;
+    private int grams;
 
     @NotNull
     @DecimalMin(value = "0.0", inclusive = false, message = "Price is required and must be greater than 0")

@@ -1,5 +1,6 @@
 package yummydelivery.server.exceptions.handler;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -17,7 +18,19 @@ public class GlobalExceptionHandler {
                                 .builder()
                                 .message(ex.getMessage())
                                 .statusCode(ex.getStatus().value())
-                                .content(null)
+                                .body(null)
+                                .build()
+                );
+    }
+    @ExceptionHandler({IllegalArgumentException.class})
+    public ResponseEntity<Object> handleIllegalArgumentExceptions(IllegalArgumentException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(
+                        ResponseDTO
+                                .builder()
+                                .message(ex.getMessage())
+                                .statusCode(HttpStatus.UNAUTHORIZED.value())
+                                .body(null)
                                 .build()
                 );
     }

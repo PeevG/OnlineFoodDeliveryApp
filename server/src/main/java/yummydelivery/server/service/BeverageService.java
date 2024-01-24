@@ -5,68 +5,67 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import yummydelivery.server.dto.BeverageDTO.AddOrUpdateBeverageDTO;
 import yummydelivery.server.dto.BeverageDTO.BeverageDTO;
+import yummydelivery.server.enums.ProductTypeEnum;
 import yummydelivery.server.exceptions.BeverageNotFoundException;
+import yummydelivery.server.exceptions.InvalidProductTypeException;
+import yummydelivery.server.exceptions.ProductNotFoundException;
 import yummydelivery.server.model.BeverageEntity;
-import yummydelivery.server.repository.BeverageRepository;
+
+
+import yummydelivery.server.model.Product;
+
+import yummydelivery.server.repository.ProductRepository;
 import yummydelivery.server.security.AuthenticationFacade;
 
 @Service
 public class BeverageService {
-    private final BeverageRepository beverageRepository;
+    private final ProductRepository productRepository;
     private final ModelMapper modelMapper;
     private final AuthenticationFacade authenticationFacade;
 
-    public BeverageService(BeverageRepository beverageRepository, ModelMapper modelMapper, AuthenticationFacade authenticationFacade) {
-        this.beverageRepository = beverageRepository;
+    public BeverageService( ProductRepository productRepository, ModelMapper modelMapper, AuthenticationFacade authenticationFacade) {
+        this.productRepository = productRepository;
         this.modelMapper = modelMapper;
         this.authenticationFacade = authenticationFacade;
     }
 
     public BeverageDTO getBeverage(Long id) {
-        BeverageEntity beverageEntity = beverageRepository
-                .findById(id).orElseThrow(
-                        () -> new BeverageNotFoundException(HttpStatus.NOT_FOUND, "Beverage with id " + id + " not found"));
+        Product product = productRepository
+                .findById(id).orElseThrow(() -> new ProductNotFoundException(HttpStatus.NOT_FOUND, "Product not found"));
+        BeverageEntity beverageEntity;
+        if (product.getProductType().equals(ProductTypeEnum.BEVERAGE)) {
+            beverageEntity = (BeverageEntity) product;
+        } else {
+            throw new InvalidProductTypeException(HttpStatus.BAD_REQUEST, "Unexpected product type: " + product.getProductType());
+        }
         return modelMapper.map(beverageEntity, BeverageDTO.class);
     }
 
     public void addBeverage(AddOrUpdateBeverageDTO addBeverageDTO) {
 
-        authenticationFacade.checkIfUserIsAuthorized();
+        authenticationFacade.checkIfUserIsAdmin();
 
-        BeverageEntity beverageEntity = BeverageEntity
-                .builder()
-                .name(addBeverageDTO.getName())
-                .milliliters(addBeverageDTO.getMilliliters())
-                .price(addBeverageDTO.getPrice())
-                .build();
-        beverageRepository.save(beverageEntity);
+        BeverageEntity beverageEntity = modelMapper.map(addBeverageDTO, BeverageEntity.class);
+        beverageEntity.setProductType(ProductTypeEnum.BEVERAGE);
+        productRepository.save(beverageEntity);
     }
 
     public void updateBeverage(Long id, AddOrUpdateBeverageDTO dto) {
-        authenticationFacade.checkIfUserIsAuthorized();
-
-        BeverageEntity beverageEntity =
-                beverageRepository
+        authenticationFacade.checkIfUserIsAdmin();
+        Product product =
+                productRepository
                         .findById(id)
                         .orElseThrow(
-                                () -> new BeverageNotFoundException(HttpStatus.NOT_FOUND, "Beverage with id " + id + " not found")
+                                () -> new BeverageNotFoundException(HttpStatus.NOT_FOUND, "Product with id " + id + " not found")
                         );
-
-        beverageEntity.setMilliliters(dto.getMilliliters());
-        beverageEntity.setName(dto.getName());
+        if (!product.getProductType().equals(ProductTypeEnum.BEVERAGE)) {
+            throw new InvalidProductTypeException(HttpStatus.BAD_REQUEST, "To update beverage, product type must be 'Beverage'");
+        }
+        BeverageEntity beverageEntity;
+        beverageEntity = (BeverageEntity) product;
         beverageEntity.setPrice(dto.getPrice());
-        beverageRepository.save(beverageEntity);
-    }
-
-    public void deleteBeverage(Long id) {
-
-        authenticationFacade.checkIfUserIsAuthorized();
-
-        BeverageEntity beverageEntity = beverageRepository
-                .findById(id)
-                .orElseThrow(
-                        () -> new BeverageNotFoundException(HttpStatus.NOT_FOUND, "Beverage with id " + id + " not found")
-                );
-        beverageRepository.delete(beverageEntity);
+        beverageEntity.setName(dto.getName());
+        beverageEntity.setMilliliters(dto.getMilliliters());
+        productRepository.save(beverageEntity);
     }
 }

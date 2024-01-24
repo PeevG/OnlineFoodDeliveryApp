@@ -17,7 +17,7 @@ import java.util.List;
 public class FoodDTO {
     private Long id;
     private String name;
-    private int weight;
+    private int grams;
     private double price;
     @Enumerated(EnumType.ORDINAL)
     private FoodTypeEnum foodTypeEnum;

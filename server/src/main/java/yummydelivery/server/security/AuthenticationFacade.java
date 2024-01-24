@@ -23,7 +23,7 @@ public class AuthenticationFacade implements IAuthenticationFacade {
     }
 
     @Override
-    public void checkIfUserIsAuthorized() {
+    public void checkIfUserIsAdmin() {
         String username = getAuthentication().getName();
         UserEntity currentUser = userRepository
                 .findByEmail(username)
@@ -31,6 +31,16 @@ public class AuthenticationFacade implements IAuthenticationFacade {
         String userRole = currentUser.getRoles().stream().map(r -> r.getName().name()).findFirst().get();
         if (!userRole.equals("ADMIN")) {
             throw new UnauthorizedException(HttpStatus.UNAUTHORIZED, "You are not authorized for this operation");
+        }
+    }
+
+    @Override
+    public void checkIfUserIsAuthenticated() {
+        Authentication authentication = getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new UnauthorizedException(HttpStatus.UNAUTHORIZED, "User is not authenticated");
+            // TODO: If user is unauthenticated redirect him to registration page.
+            //  This may be happen in front end after an exception is thrown
         }
     }
 }

@@ -35,8 +35,7 @@ public class FoodController {
                         ResponseDTO
                                 .<FoodDTO>builder()
                                 .statusCode(HttpStatus.OK.value())
-                                .message("Food '" + foodDTO.getName() + "' is returned.")
-                                .content(foodDTO)
+                                .body(foodDTO)
                                 .build()
                 );
     }
@@ -67,7 +66,7 @@ public class FoodController {
                         ResponseDTO
                                 .<Void>builder()
                                 .statusCode(HttpStatus.CREATED.value())
-                                .message(addFoodDTO.getName() + " was added successfully")
+                                .message(addFoodDTO.getName() + " is added successfully")
                                 .build()
                 );
     }
@@ -81,21 +80,21 @@ public class FoodController {
                         ResponseDTO
                                 .<List<FoodDTO>>builder()
                                 .statusCode(HttpStatus.OK.value())
-                                .content(foodsByType)
+                                .body(foodsByType)
                                 .build()
                 );
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponseDTO<Void>> deleteFood(@PathVariable Long id) {
-        foodService.deleteFood(id);
+        foodService.deleteFoodOrBeverage(id);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(
                         ResponseDTO
                                 .<Void>builder()
                                 .statusCode(HttpStatus.OK.value())
-                                .message("Food with id " + id + " was deleted successfully")
+                                .message("Food with id " + id + " is deleted successfully")
                                 .build()
                 );
     }
@@ -126,8 +125,8 @@ public class FoodController {
                 .body(
                         ResponseDTO
                                 .<Void>builder()
-                                .message("Food with id " + id + " was updated successfully")
-                                .statusCode(HttpStatus.OK.value())
+                                .message("Food with id " + id + " is updated successfully")
+                                .statusCode(HttpStatus.CREATED.value())
                                 .build()
                 );
     }

@@ -21,3 +21,14 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
         show_sql: false
+springdoc:
+  packagesToScan: yummydelivery.server.api
+  pathsToMatch: /api/v1/**
+  swagger-ui:
+    operationsSorter: method
+    disable-swagger-default-url: true
+    url: /v3/api-docs
+    tags-sorter: alpha
+  show-actuator: true
+  api-docs:
+    version: openapi_3_0

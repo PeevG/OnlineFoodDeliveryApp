@@ -5,6 +5,7 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 import yummydelivery.server.enums.FoodTypeEnum;
+import yummydelivery.server.enums.ProductTypeEnum;
 import yummydelivery.server.enums.RoleEnum;
 import yummydelivery.server.model.*;
 import yummydelivery.server.repository.*;
@@ -15,17 +16,16 @@ import java.util.Set;
 @Component
 public class DataLoader implements ApplicationRunner {
     private final RoleRepository roleRepository;
-    private final FoodRepository foodRepository;
+    private final ProductRepository productRepository;
     private final UserRepository userRepository;
     private final AddressRepository addressRepository;
-    private final BeverageRepository beverageRepository;
 
-    public DataLoader(RoleRepository roleRepository, FoodRepository foodRepository, UserRepository userRepository, AddressRepository addressRepository, BeverageRepository beverageRepository) {
+
+    public DataLoader(RoleRepository roleRepository, ProductRepository productRepository, UserRepository userRepository, AddressRepository addressRepository) {
         this.roleRepository = roleRepository;
-        this.foodRepository = foodRepository;
+        this.productRepository = productRepository;
         this.userRepository = userRepository;
         this.addressRepository = addressRepository;
-        this.beverageRepository = beverageRepository;
     }
 
     @Transactional
@@ -58,6 +58,7 @@ public class DataLoader implements ApplicationRunner {
                     .roles(Set.of(customerRole))
                     .password("$2a$10$d5wSM4U6MOUuYN0YvlJ3reAbYBBnrw5f6qvhf3RMwiqzUc8ffYWci")
                     .addresses(List.of(customerAddress))
+                    .cart(new ShoppingCartEntity())
                     .build();
 
             UserEntity admin = UserEntity
@@ -73,47 +74,42 @@ public class DataLoader implements ApplicationRunner {
             addressRepository.saveAll(List.of(adminAddress, customerAddress));
             userRepository.saveAll(List.of(admin, customer));
         }
-        loadFoods();
-        loadBeverages();
-
+        loadNewFoodsAndBeverages();
     }
+    public void loadNewFoodsAndBeverages() {
+        if (productRepository.count() < 1) {
+            BeverageEntity water = new BeverageEntity();
+            water.setName("Devin");
+            water.setMilliliters(500);
+            water.setPrice(2.50);
+            water.setImageURL("blabla");
+            water.setProductType(ProductTypeEnum.BEVERAGE);
 
-    private void loadBeverages() {
-        if (beverageRepository.count() < 1) {
-            BeverageEntity coke = BeverageEntity.builder()
-                    .milliliters(500)
-                    .name("Coke")
-                    .price(3.0)
-                    .build();
-            BeverageEntity water = BeverageEntity.builder()
-                    .milliliters(500)
-                    .name("Mineral Water")
-                    .price(3.0)
-                    .build();
-            beverageRepository.saveAll(List.of(coke, water));
-        }
-    }
+            BeverageEntity vodka = new BeverageEntity();
+            vodka.setName("Flirt");
+            vodka.setMilliliters(100);
+            vodka.setPrice(4.50);
+            vodka.setImageURL("blabla2");
+            vodka.setProductType(ProductTypeEnum.BEVERAGE);
 
-    private void loadFoods() {
-        if (foodRepository.count() < 1) {
-            FoodEntity margaritta = FoodEntity.builder()
-                    .price(8.00)
-                    .foodTypeEnum(FoodTypeEnum.PIZZA)
-                    .weight(500)
-                    .name("Margherita")
-                    .imageURL("https://maisons.bg/burgas/wp-content/uploads/2020/03/Food-Burgas_90.jpg")
-                    .ingredients(List.of("Tomato Sauce", "Mozzarella", "Basil"))
-                    .build();
+            FoodEntity marga = new FoodEntity();
+            marga.setName("Margaritka");
+            marga.setIngredients(List.of("Tomato Sauce", "Mozzarella", "Basil"));
+            marga.setFoodTypeEnum(FoodTypeEnum.PIZZA);
+            marga.setPrice(8.00);
+            marga.setGrams(500);
+            marga.setProductType(ProductTypeEnum.FOOD);
+            marga.setImageURL("https://maisons.bg/burgas/wp-content/uploads/2020/03/Food-Burgas_90.jpg");
 
-            FoodEntity capricciosa = FoodEntity.builder()
-                    .price(14.50)
-                    .foodTypeEnum(FoodTypeEnum.PIZZA)
-                    .weight(600)
-                    .name("Capricciosa")
-                    .imageURL("https://wips.plug.it/cips/buonissimo.org/cms/2019/04/pizza-capricciosa.jpg?w=713&a=c&h=407")
-                    .ingredients(List.of("Tomato Sauce", "Mozzarella", "Cheese", "Baked Ham", "Mushroom", "Artichoke"))
-                    .build();
-            foodRepository.saveAll(List.of(margaritta, capricciosa));
+            FoodEntity cappri = new FoodEntity();
+            cappri.setName("Kaprichozka");
+            cappri.setIngredients(List.of("Tomato Sauce", "Mozzarella", "Cheese", "Baked Ham", "Mushroom", "Artichoke"));
+            cappri.setFoodTypeEnum(FoodTypeEnum.PIZZA);
+            cappri.setPrice(14.00);
+            cappri.setGrams(700);
+            cappri.setProductType(ProductTypeEnum.FOOD);
+            cappri.setImageURL("https://maisons.bg/burgas/wp-content/uploads/2020/03/Food-Burgas_90.jpg");
+            productRepository.saveAll(List.of(marga, cappri, vodka, water));
         }
     }
 }
