@@ -43,4 +43,7 @@ public class OrderEntity {
             inverseJoinColumns = @JoinColumn(name = "food_id"))
     private List<Product> orderedProducts = new ArrayList<>();
 
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "delivery_address_id")
+    private AddressEntity deliveryAddress;
 }

@@ -38,16 +38,24 @@ public class DataLoader implements ApplicationRunner {
                     .builder()
                     .city("Sofia")
                     .phoneNumber("08888881234")
-                    .streetNumber(23)
-                    .street("Vitosha street")
+                    .streetNumber("23")
+                    .streetName("Vitosha street")
                     .build();
 
             AddressEntity customerAddress = AddressEntity
                     .builder()
                     .city("Sofia")
                     .phoneNumber("09998881234")
-                    .streetNumber(33)
-                    .street("Aleksandrovska street")
+                    .streetNumber("33 B")
+                    .streetName("Aleksandrovska street")
+                    .build();
+
+            AddressEntity customerSecondAddress = AddressEntity
+                    .builder()
+                    .city("Ahtopol")
+                    .phoneNumber("09998881234")
+                    .streetNumber("32 B")
+                    .streetName("Saint Yani street")
                     .build();
 
             UserEntity customer = UserEntity
@@ -57,7 +65,7 @@ public class DataLoader implements ApplicationRunner {
                     .lastName("Ivanov")
                     .roles(Set.of(customerRole))
                     .password("$2a$10$d5wSM4U6MOUuYN0YvlJ3reAbYBBnrw5f6qvhf3RMwiqzUc8ffYWci")
-                    .addresses(List.of(customerAddress))
+                    .addresses(List.of(customerAddress, customerSecondAddress))
                     .cart(new ShoppingCartEntity())
                     .build();
 

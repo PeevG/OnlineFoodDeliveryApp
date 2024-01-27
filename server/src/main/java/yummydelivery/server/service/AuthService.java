@@ -58,18 +58,11 @@ public class AuthService {
         RoleEntity customerRole = roleRepository.findByName(RoleEnum.CUSTOMER)
                 .orElseThrow(() -> new RoleNotFoundException(HttpStatus.INTERNAL_SERVER_ERROR, "No Default User Role in the database"));
 
-        AddressEntity userAddress = new AddressEntity();
-        userAddress = modelMapper.map(signUpDTO.getAddress(), AddressEntity.class);
+        AddressEntity userAddress = mapDtoAddressInfoToAddress(signUpDTO);
+        UserEntity newUser = mapDtoToUser(signUpDTO,customerRole, userAddress);
 
-        UserEntity newUser = modelMapper.map(signUpDTO, UserEntity.class);
-        newUser.setPassword(passwordEncoder.encode(signUpDTO.getPassword()));
-        newUser.setAddresses(List.of(userAddress));
-        newUser.setRoles(Set.of(customerRole));
-
-        addressRepository.save(userAddress);
         userRepository.save(newUser);
     }
-
 
     public String signInUser(SignInDTO signInDTO) {
         if (!userRepository.existsByEmail(signInDTO.getEmail())) {
@@ -87,5 +80,25 @@ public class AuthService {
                         .authenticate(new UsernamePasswordAuthenticationToken(signInDTO.getEmail(), signInDTO.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         return jwtTokenProvider.generateJwtToken(authentication);
+    }
+    private UserEntity mapDtoToUser(SignUpDTO signUpDTO,RoleEntity customerRole, AddressEntity userAddress) {
+        UserEntity newUser = new UserEntity();
+        newUser.setRoles(Set.of(customerRole));
+        newUser.setAddresses(List.of(userAddress));
+        newUser.setPassword(passwordEncoder.encode(signUpDTO.getPassword()));
+        newUser.setEmail(signUpDTO.getEmail());
+        newUser.setFirstName(signUpDTO.getFirstName());
+        newUser.setLastName(signUpDTO.getLastName());
+        return newUser;
+    }
+
+    private AddressEntity mapDtoAddressInfoToAddress(SignUpDTO signUpDTO) {
+        AddressEntity userAddress = new AddressEntity();
+        userAddress.setCity(signUpDTO.getCity());
+        userAddress.setPhoneNumber(signUpDTO.getPhoneNumber());
+        userAddress.setStreetName(signUpDTO.getStreetName());
+        userAddress.setStreetNumber(signUpDTO.getStreetNumber());
+        addressRepository.save(userAddress);
+        return userAddress;
     }
 }
