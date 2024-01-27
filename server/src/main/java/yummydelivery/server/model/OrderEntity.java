@@ -8,8 +8,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import yummydelivery.server.enums.OrderStatusEnum;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -33,12 +35,12 @@ public class OrderEntity {
     @ManyToOne
     private UserEntity customer;
 
-    private String status;
+    private OrderStatusEnum status;
 
     @OneToMany
     @JoinTable(name = "orders_foods",
             joinColumns = @JoinColumn(name = "order_id"),
             inverseJoinColumns = @JoinColumn(name = "food_id"))
-    private List<Product> orderedProducts;
+    private List<Product> orderedProducts = new ArrayList<>();
 
 }

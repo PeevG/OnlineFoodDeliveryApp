@@ -18,4 +18,5 @@ public class CartItem {
     @OneToOne(fetch = FetchType.EAGER)
     private Product product;
     private int quantity;
+    private double price;
 }

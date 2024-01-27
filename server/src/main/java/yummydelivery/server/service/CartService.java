@@ -4,7 +4,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import yummydelivery.server.dto.ShoppingCartDTO;
-import yummydelivery.server.exceptions.ApiException;
 import yummydelivery.server.exceptions.ProductNotFoundException;
 import yummydelivery.server.exceptions.ShoppingCartException;
 import yummydelivery.server.exceptions.UserNotFoundException;
@@ -58,6 +57,9 @@ public class CartService {
         } else {
             cartItem.setQuantity(cartItem.getQuantity() + 1);
         }
+        cartItem.setPrice(cartItem.getQuantity() * product.getPrice());
+
+        shoppingCartEntity.setCartPrice(getShoppingCartTotalPrice(shoppingCartEntity));
         cartRepository.save(shoppingCartEntity);
     }
 
@@ -68,6 +70,7 @@ public class CartService {
 
         List<CartItem> cartItems = shoppingCartEntity.getCartItems();
         cartDTO.setItems(cartItems);
+        cartDTO.setCartPrice(shoppingCartEntity.getCartPrice());
         return cartDTO;
     }
 
@@ -79,7 +82,11 @@ public class CartService {
                 .findByEmail(username).orElseThrow(() -> new UserNotFoundException(HttpStatus.NOT_FOUND, "User not found"));
         CartItem itemToRemove = cartItemRepository
                 .findById(cartItemId).orElseThrow(() -> new ShoppingCartException(HttpStatus.NOT_FOUND, "Cart Item not found"));
-        user.getCart().getCartItems().remove(itemToRemove);
+
+        ShoppingCartEntity userCart = user.getCart();
+        userCart.getCartItems().remove(itemToRemove);
+
+        userCart.setCartPrice(getShoppingCartTotalPrice(userCart));
         userRepository.save(user);
     }
 
@@ -91,5 +98,11 @@ public class CartService {
             }
         }
         return cartItem;
+    }
+
+    private double getShoppingCartTotalPrice(ShoppingCartEntity shoppingCart) {
+        return shoppingCart.getCartItems().stream()
+                .mapToDouble(CartItem::getPrice)
+                .sum();
     }
 }

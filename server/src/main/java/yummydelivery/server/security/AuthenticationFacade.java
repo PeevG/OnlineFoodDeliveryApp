@@ -39,8 +39,6 @@ public class AuthenticationFacade implements IAuthenticationFacade {
         Authentication authentication = getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new UnauthorizedException(HttpStatus.UNAUTHORIZED, "User is not authenticated");
-            // TODO: If user is unauthenticated redirect him to registration page.
-            //  This may be happen in front end after an exception is thrown
         }
     }
 }

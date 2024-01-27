@@ -15,4 +15,5 @@ import java.util.List;
 @Setter
 public class ShoppingCartDTO {
     private List<CartItem> items = new ArrayList<>();
+    private double cartPrice;
 }

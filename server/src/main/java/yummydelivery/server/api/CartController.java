@@ -28,7 +28,7 @@ public class CartController {
                         ResponseDTO
                                 .<String>builder()
                                 .statusCode(HttpStatus.OK.value())
-                                .body("Food with id " + foodId + " is added to cart successfully")
+                                .body("Product with id " + foodId + " is added to cart successfully")
                                 .build()
                 );
     }
@@ -42,7 +42,7 @@ public class CartController {
                         ResponseDTO
                                 .<String>builder()
                                 .statusCode(HttpStatus.OK.value())
-                                .message("Food cart item is removed successfully")
+                                .message("Cart item is removed successfully")
                                 .build()
                 );
     }
