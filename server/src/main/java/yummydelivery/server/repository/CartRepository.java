@@ -6,5 +6,4 @@ import yummydelivery.server.model.ShoppingCartEntity;
 
 @Repository
 public interface CartRepository extends JpaRepository<ShoppingCartEntity, Long> {
-   // Optional<CartEntity> findCartEntityByOwnerEmail(String email);
 }

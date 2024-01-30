@@ -4,7 +4,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import yummydelivery.server.dto.AddressDTO;
-import yummydelivery.server.dto.AddressView;
+import yummydelivery.server.dto.view.AddressView;
 import yummydelivery.server.exceptions.AddressNotFoundException;
 import yummydelivery.server.exceptions.UnauthorizedException;
 import yummydelivery.server.exceptions.UserNotFoundException;
@@ -22,20 +22,20 @@ public class AddressService {
     private final UserRepository userRepository;
     private final AuthenticationFacade authenticationFacade;
     private final ModelMapper modelMapper;
+    private final UserService userService;
 
-    public AddressService(AddressRepository addressRepository, UserRepository userRepository, AuthenticationFacade authenticationFacade, ModelMapper modelMapper) {
+    public AddressService(AddressRepository addressRepository, UserRepository userRepository, AuthenticationFacade authenticationFacade, ModelMapper modelMapper, UserService userService) {
         this.addressRepository = addressRepository;
         this.userRepository = userRepository;
         this.authenticationFacade = authenticationFacade;
         this.modelMapper = modelMapper;
+        this.userService = userService;
     }
 
     public List<AddressView> getUserAddresses() {
         authenticationFacade.checkIfUserIsAuthenticated();
 
-        String userName = authenticationFacade.getAuthentication().getName();
-        UserEntity user = userRepository
-                .findByEmail(userName).orElseThrow(() -> new UserNotFoundException(HttpStatus.NOT_FOUND, "User not found"));
+        UserEntity user = userService.getCurrentUserByUsername();
 
         return addressRepository.findAllAddressesByUserId(user.getId());
     }
@@ -44,14 +44,12 @@ public class AddressService {
     public AddressDTO addNewAddress(AddressDTO addressDTO) {
         authenticationFacade.checkIfUserIsAuthenticated();
 
-        String username = authenticationFacade.getAuthentication().getName();
-        UserEntity user = userRepository
-                .findByEmail(username).orElseThrow(() -> new UserNotFoundException(HttpStatus.NOT_FOUND, "User not found"));
+        UserEntity user = userService.getCurrentUserByUsername();
 
         AddressEntity newAddress = modelMapper.map(addressDTO, AddressEntity.class);
         addressRepository.save(newAddress);
 
-        List<AddressEntity> userAddresses = addressRepository.getAddressEntitiesByUsername(username);
+        List<AddressEntity> userAddresses = addressRepository.getAddressEntitiesByUsername(user.getEmail());
         userAddresses.add(newAddress);
         user.setAddresses(userAddresses);
         userRepository.save(user);
@@ -85,8 +83,7 @@ public class AddressService {
         List<AddressEntity> userAddresses = addressRepository
                 .getAddressEntitiesByUsername(username);
         userAddresses.remove(address);
-        UserEntity user = userRepository
-                .findByEmail(username).orElseThrow(() -> new UserNotFoundException(HttpStatus.NOT_FOUND, "User not found"));
+        UserEntity user = userService.getCurrentUserByUsername();
         user.setAddresses(userAddresses);
         userRepository.save(user);
         addressRepository.delete(address);

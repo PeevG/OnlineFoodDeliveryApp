@@ -1,4 +1,4 @@
-package yummydelivery.server.dto;
+package yummydelivery.server.dto.view;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -23,9 +23,8 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PutMapping("/user/{userId}")
-    public ResponseEntity<ResponseDTO<Void>> changeUserPassword(@PathVariable(name = "userId") Long userId,
-                                                                             @Valid @RequestBody UpdatePasswordDTO userInfoDTO,
+    @PutMapping("/user")
+    public ResponseEntity<ResponseDTO<Void>> changeUserPassword(@Valid @RequestBody UpdatePasswordDTO userInfoDTO,
                                                                              BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             String errors = bindingResult
@@ -43,7 +42,7 @@ public class UserController {
                                     .build()
                     );
         }
-        userService.updateUserInfo(userInfoDTO, userId);
+        userService.updateUserPassword(userInfoDTO);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(

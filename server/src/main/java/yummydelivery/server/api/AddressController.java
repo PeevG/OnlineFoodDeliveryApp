@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import yummydelivery.server.dto.AddressDTO;
-import yummydelivery.server.dto.AddressView;
+import yummydelivery.server.dto.view.AddressView;
 import yummydelivery.server.dto.ResponseDTO;
 import yummydelivery.server.service.AddressService;
 

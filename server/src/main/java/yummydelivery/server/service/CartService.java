@@ -6,7 +6,6 @@ import org.springframework.transaction.annotation.Transactional;
 import yummydelivery.server.dto.ShoppingCartDTO;
 import yummydelivery.server.exceptions.ProductNotFoundException;
 import yummydelivery.server.exceptions.ShoppingCartException;
-import yummydelivery.server.exceptions.UserNotFoundException;
 import yummydelivery.server.model.*;
 import yummydelivery.server.repository.*;
 import yummydelivery.server.security.AuthenticationFacade;
@@ -18,13 +17,15 @@ import java.util.Optional;
 public class CartService {
     private final CartRepository cartRepository;
     private final UserRepository userRepository;
+    private final UserService userService;
     private final CartItemRepository cartItemRepository;
     private final AuthenticationFacade authenticationFacade;
     private final ProductRepository productRepository;
 
-    public CartService(CartRepository cartRepository, UserRepository userRepository, CartItemRepository cartItemRepository, AuthenticationFacade authenticationFacade, ProductRepository productRepository) {
+    public CartService(CartRepository cartRepository, UserRepository userRepository, UserService userService, CartItemRepository cartItemRepository, AuthenticationFacade authenticationFacade, ProductRepository productRepository) {
         this.cartRepository = cartRepository;
         this.userRepository = userRepository;
+        this.userService = userService;
         this.cartItemRepository = cartItemRepository;
         this.authenticationFacade = authenticationFacade;
         this.productRepository = productRepository;
@@ -36,9 +37,7 @@ public class CartService {
         Product product = productRepository
                 .findById(foodId).orElseThrow(() -> new ProductNotFoundException(HttpStatus.NOT_FOUND, "Product not found"));
 
-        String username = authenticationFacade.getAuthentication().getName();
-        UserEntity user = userRepository
-                .findByEmail(username).orElseThrow(() -> new UserNotFoundException(HttpStatus.NOT_FOUND, "User not found"));
+        UserEntity user = userService.getCurrentUserByUsername();
         ShoppingCartEntity shoppingCartEntity = user.getCart();
         CartItem cartItem = findItemInShoppingCart(shoppingCartEntity.getCartItems(), foodId);
 
@@ -64,8 +63,7 @@ public class CartService {
     }
 
     public ShoppingCartDTO getUserCart() {
-        String username = authenticationFacade.getAuthentication().getName();
-        ShoppingCartEntity shoppingCartEntity = userRepository.findByEmail(username).get().getCart();
+        ShoppingCartEntity shoppingCartEntity = userService.getCurrentUserByUsername().getCart();
         ShoppingCartDTO cartDTO = new ShoppingCartDTO();
 
         List<CartItem> cartItems = shoppingCartEntity.getCartItems();
@@ -77,9 +75,8 @@ public class CartService {
     @Transactional
     public void removeItemFromCart(Long cartItemId) {
         authenticationFacade.checkIfUserIsAuthenticated();
-        String username = authenticationFacade.getAuthentication().getName();
-        UserEntity user = userRepository
-                .findByEmail(username).orElseThrow(() -> new UserNotFoundException(HttpStatus.NOT_FOUND, "User not found"));
+
+        UserEntity user = userService.getCurrentUserByUsername();
         CartItem itemToRemove = cartItemRepository
                 .findById(cartItemId).orElseThrow(() -> new ShoppingCartException(HttpStatus.NOT_FOUND, "Cart Item not found"));
 

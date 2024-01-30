@@ -22,11 +22,10 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public void updateUserInfo(UpdatePasswordDTO userInfoDTO, Long userId) {
+    public void updateUserPassword(UpdatePasswordDTO userInfoDTO) {
         authenticationFacade.checkIfUserIsAuthenticated();
 
-        UserEntity user = userRepository
-                .findById(userId).orElseThrow(() -> new UserNotFoundException(HttpStatus.NOT_FOUND, "User not found"));
+        UserEntity user = getCurrentUserByUsername();
 
         if (!userInfoDTO.getNewPassword().equals(userInfoDTO.getRepeatNewPassword())) {
             throw new InvalidCredentialsException(HttpStatus.UNAUTHORIZED, "'New Password' does not match 'Repeat new password'");
@@ -36,5 +35,11 @@ public class UserService {
         }
         user.setPassword(passwordEncoder.encode(userInfoDTO.getNewPassword()));
         userRepository.save(user);
+    }
+
+    protected UserEntity getCurrentUserByUsername() {
+        String username = authenticationFacade.getAuthentication().getName();
+        return userRepository
+                .findByEmail(username).orElseThrow(() -> new UserNotFoundException(HttpStatus.NOT_FOUND, "User not found"));
     }
 }

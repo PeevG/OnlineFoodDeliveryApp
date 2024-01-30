@@ -8,9 +8,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.scheduling.annotation.Scheduled;
 import yummydelivery.server.enums.OrderStatusEnum;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,24 +28,19 @@ public class OrderEntity {
     private Long id;
 
     @CreationTimestamp
-    private LocalDate createdOn;
+    private LocalDateTime createdOn;
 
     @NotNull
     @DecimalMin(value = "0.0", inclusive = false, message = "Order cost is required and must be greater than 0")
     private double orderCost;
-
-    @ManyToOne
-    private UserEntity customer;
-
+    @Enumerated
     private OrderStatusEnum status;
 
-    @OneToMany
-    @JoinTable(name = "orders_foods",
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "order_cart_items",
             joinColumns = @JoinColumn(name = "order_id"),
-            inverseJoinColumns = @JoinColumn(name = "food_id"))
-    private List<Product> orderedProducts = new ArrayList<>();
-
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "delivery_address_id")
+            inverseJoinColumns = @JoinColumn(name = "cart_item_id"))
+    private List<CartItem> orderedProducts = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.EAGER)
     private AddressEntity deliveryAddress;
 }
