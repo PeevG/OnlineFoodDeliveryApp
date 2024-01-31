@@ -6,7 +6,20 @@ logging:
     org:
       springframework:
         security: DEBUG
+        web:
+    root: info
 spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${SENDER_MAIL_ADDRESS}
+    password: ${SENDER_MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
   datasource:
     driver-class-name: org.postgresql.Driver
     password: ${DB_PASSWORD}
