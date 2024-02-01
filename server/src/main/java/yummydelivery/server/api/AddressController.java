@@ -2,6 +2,7 @@ package yummydelivery.server.api;
 
 import jakarta.validation.Valid;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -26,13 +27,13 @@ public class AddressController {
     }
 
     @GetMapping
-    public ResponseEntity<ResponseDTO<List<AddressView>>> getUserAddresses() {
-        List<AddressView> userAddresses = addressService.getUserAddresses();
+    public ResponseEntity<ResponseDTO<Page<AddressView>>> getUserAddresses(@RequestParam(defaultValue = "0") int page) {
+        Page<AddressView> userAddresses = addressService.getUserAddresses(page);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(
                         ResponseDTO
-                                .<List<AddressView>>builder()
+                                .<Page<AddressView>>builder()
                                 .statusCode(HttpStatus.OK.value())
                                 .body(userAddresses)
                                 .build()

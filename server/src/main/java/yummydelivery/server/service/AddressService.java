@@ -1,6 +1,8 @@
 package yummydelivery.server.service;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import yummydelivery.server.dto.AddressDTO;
@@ -32,12 +34,12 @@ public class AddressService {
         this.userService = userService;
     }
 
-    public List<AddressView> getUserAddresses() {
+    public Page<AddressView> getUserAddresses(int page) {
         authenticationFacade.checkIfUserIsAuthenticated();
 
         UserEntity user = userService.getCurrentUserByUsername();
-
-        return addressRepository.findAllAddressesByUserId(user.getId());
+        if(page > 0) page -= 1;
+        return addressRepository.findAllAddressesByUserId(user.getId(), PageRequest.of(page, 6));
     }
 
 
