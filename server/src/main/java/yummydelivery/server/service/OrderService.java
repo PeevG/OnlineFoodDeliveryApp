@@ -2,6 +2,9 @@ package yummydelivery.server.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -11,7 +14,6 @@ import yummydelivery.server.exceptions.AddressNotFoundException;
 import yummydelivery.server.exceptions.UserNotFoundException;
 import yummydelivery.server.model.*;
 import yummydelivery.server.repository.AddressRepository;
-import yummydelivery.server.repository.CartRepository;
 import yummydelivery.server.repository.OrderRepository;
 import yummydelivery.server.repository.UserRepository;
 import yummydelivery.server.security.AuthenticationFacade;
@@ -50,12 +52,18 @@ public class OrderService {
         clearUserShoppingCart(currentUser);
     }
 
-    public List<OrderView> getUserOrders() {
+    public Page<OrderView> getUserOrders(int page) {
+        if (page > 0) page -= 1;
         UserEntity currentUser = getCurrentUserWithOrders();
-        return currentUser
-                .getOrders()
+
+        Page<OrderEntity> ordersPageable = orderRepository.findAllByUserId(currentUser.getId(), PageRequest.of(page, 6));
+        List<OrderView> mappedOrders = ordersPageable
+                .getContent()
                 .stream()
-                .map(o -> modelMapper.map(o, OrderView.class)).toList();
+                .map(o -> modelMapper.map(o, OrderView.class))
+                .toList();
+
+        return new PageImpl<>(mappedOrders, ordersPageable.getPageable(), ordersPageable.getTotalElements());
     }
 
     private static void clearUserShoppingCart(UserEntity currentUser) {
@@ -98,7 +106,7 @@ public class OrderService {
             if (createMoreThanOneHour) {
                 o.setStatus(OrderStatusEnum.DELIVERED);
                 orderRepository.save(o);
-                log.atInfo().log("Order status is changed because 1 hour has passed since creation time");
+                log.info("Order status is changed because 1 hour has passed since order creation time");
             }
         }
     }

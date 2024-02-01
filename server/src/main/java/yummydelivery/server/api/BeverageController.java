@@ -2,6 +2,7 @@ package yummydelivery.server.api;
 
 import jakarta.validation.Valid;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import yummydelivery.server.dto.BeverageDTO.AddOrUpdateBeverageDTO;
 import yummydelivery.server.dto.BeverageDTO.BeverageDTO;
 import yummydelivery.server.dto.ResponseDTO;
+import yummydelivery.server.dto.view.BeverageView;
 import yummydelivery.server.service.BeverageService;
 import yummydelivery.server.service.FoodService;
 
@@ -38,6 +40,20 @@ public class BeverageController {
                                 .<BeverageDTO>builder()
                                 .statusCode(HttpStatus.OK.value())
                                 .body(beverageDTO)
+                                .build()
+                );
+    }
+
+    @GetMapping
+    public ResponseEntity<ResponseDTO<Page<BeverageView>>> getAllBeverages(@RequestParam(defaultValue = "0") int page) {
+        Page<BeverageView> beverageDTOS = beverageService.getAllBeverages(page - 1);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(
+                        ResponseDTO
+                                .<Page<BeverageView>>builder()
+                                .statusCode(HttpStatus.OK.value())
+                                .body(beverageDTOS)
                                 .build()
                 );
     }

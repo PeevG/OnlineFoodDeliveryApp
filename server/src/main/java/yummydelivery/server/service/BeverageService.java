@@ -1,10 +1,14 @@
 package yummydelivery.server.service;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import yummydelivery.server.dto.BeverageDTO.AddOrUpdateBeverageDTO;
 import yummydelivery.server.dto.BeverageDTO.BeverageDTO;
+import yummydelivery.server.dto.view.BeverageView;
 import yummydelivery.server.enums.ProductTypeEnum;
 import yummydelivery.server.exceptions.BeverageNotFoundException;
 import yummydelivery.server.exceptions.InvalidProductTypeException;
@@ -17,13 +21,15 @@ import yummydelivery.server.model.Product;
 import yummydelivery.server.repository.ProductRepository;
 import yummydelivery.server.security.AuthenticationFacade;
 
+import java.util.List;
+
 @Service
 public class BeverageService {
     private final ProductRepository productRepository;
     private final ModelMapper modelMapper;
     private final AuthenticationFacade authenticationFacade;
 
-    public BeverageService( ProductRepository productRepository, ModelMapper modelMapper, AuthenticationFacade authenticationFacade) {
+    public BeverageService(ProductRepository productRepository, ModelMapper modelMapper, AuthenticationFacade authenticationFacade) {
         this.productRepository = productRepository;
         this.modelMapper = modelMapper;
         this.authenticationFacade = authenticationFacade;
@@ -67,5 +73,17 @@ public class BeverageService {
         beverageEntity.setName(dto.getName());
         beverageEntity.setMilliliters(dto.getMilliliters());
         productRepository.save(beverageEntity);
+    }
+
+    public Page<BeverageView> getAllBeverages(int page) {
+        Page<BeverageEntity> beveragesPageable = productRepository.findAllBeveragesPageable(PageRequest.of(page, 6));
+
+        List<BeverageView> viewList = beveragesPageable
+                .getContent()
+                .stream()
+                .map(beverageEntity -> modelMapper.map(beverageEntity, BeverageView.class))
+                .toList();
+
+        return new PageImpl<>(viewList, beveragesPageable.getPageable(), beveragesPageable.getTotalElements());
     }
 }

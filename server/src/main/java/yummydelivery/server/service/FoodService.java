@@ -1,6 +1,9 @@
 package yummydelivery.server.service;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import yummydelivery.server.dto.foodDTO.AddFoodDTO;
@@ -16,7 +19,6 @@ import yummydelivery.server.security.AuthenticationFacade;
 
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -55,19 +57,19 @@ public class FoodService {
         productRepository.save(foodEntity);
     }
 
-    public List<FoodDTO> getAllFoodsByType(String foodType) {
+    public Page<FoodDTO> getAllFoodsByType(String foodType, int page) {
+        if(page > 0) page -= 1;
         FoodTypeEnum typeEnum = FoodTypeEnum.valueOf(foodType.toUpperCase());
-        List<FoodEntity> foodsByType = productRepository
-                .findAllByProductType(ProductTypeEnum.FOOD)
+        Page<FoodEntity> foodsPage = productRepository
+                .findAllByProductTypePageable(typeEnum, PageRequest.of(page, 6));
+
+        List<FoodDTO> foodsByType = foodsPage
+                .getContent()
                 .stream()
-                .map(product -> (FoodEntity) product)
-                .filter(foodEntity -> foodEntity.getFoodTypeEnum().equals(typeEnum))
+                .map(foodEntity -> modelMapper.map(foodEntity, FoodDTO.class))
                 .toList();
 
-        return foodsByType
-                .stream()
-                .map(f -> modelMapper.map(f, FoodDTO.class))
-                .collect(Collectors.toList());
+        return new PageImpl<>(foodsByType, foodsPage.getPageable(), foodsPage.getTotalElements());
     }
 
     public void deleteFoodOrBeverage(Long id) {

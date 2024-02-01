@@ -9,6 +9,10 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class BeverageView extends ProductView{
+public class BeverageView {
+    private Long id;
+    private String name;
+    private double price;
+    private String imageURL;
     private int milliliters;
 }

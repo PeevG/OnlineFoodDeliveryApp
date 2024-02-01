@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import yummydelivery.server.dto.EmailDetails;
 
@@ -20,6 +21,7 @@ public class EmailService {
         this.javaMailSender = javaMailSender;
     }
 
+    @Async
     public void sendEmail(EmailDetails emailDetails) {
         try {
             SimpleMailMessage mailMsg = new SimpleMailMessage();

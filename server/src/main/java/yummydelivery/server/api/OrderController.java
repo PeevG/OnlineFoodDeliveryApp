@@ -1,5 +1,6 @@
 package yummydelivery.server.api;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,13 +36,13 @@ public class OrderController {
     }
 
     @GetMapping()
-    public ResponseEntity<ResponseDTO<List<OrderView>>> getUserOrders() {
-        List<OrderView> userOrders = orderService.getUserOrders();
+    public ResponseEntity<ResponseDTO<Page<OrderView>>> getUserOrders(@RequestParam(defaultValue = "0") int page) {
+        Page<OrderView> userOrders = orderService.getUserOrders(page);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(
                         ResponseDTO
-                                .<List<OrderView>>builder()
+                                .<Page<OrderView>>builder()
                                 .message("User orders retrieved successfully")
                                 .statusCode(HttpStatus.OK.value())
                                 .body(userOrders)

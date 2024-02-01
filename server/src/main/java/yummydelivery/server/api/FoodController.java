@@ -2,6 +2,7 @@ package yummydelivery.server.api;
 
 import jakarta.validation.Valid;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -72,13 +73,15 @@ public class FoodController {
     }
 
     @GetMapping()
-    public ResponseEntity<ResponseDTO<List<FoodDTO>>> getFoodsByType(@RequestParam String foodType) {
-        List<FoodDTO> foodsByType = foodService.getAllFoodsByType(foodType);
+    public ResponseEntity<ResponseDTO<Page<FoodDTO>>> getFoodsByType(@RequestParam String foodType,
+                                                                     @RequestParam(defaultValue = "0") int page) {
+
+        Page<FoodDTO> foodsByType = foodService.getAllFoodsByType(foodType, page);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(
                         ResponseDTO
-                                .<List<FoodDTO>>builder()
+                                .<Page<FoodDTO>>builder()
                                 .statusCode(HttpStatus.OK.value())
                                 .body(foodsByType)
                                 .build()
