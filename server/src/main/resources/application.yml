@@ -9,6 +9,9 @@ logging:
         web:
     root: info
 spring:
+  servlet:
+    multipart:
+      max-file-size: 10MB
   mail:
     host: smtp.gmail.com
     port: 587
