@@ -11,6 +11,8 @@ import yummydelivery.server.model.BeverageEntity;
 import yummydelivery.server.model.FoodEntity;
 import yummydelivery.server.model.Product;
 
+import java.util.Optional;
+
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
@@ -20,4 +22,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query("SELECT b FROM BeverageEntity b WHERE b.productType = 'BEVERAGE'")
     Page<BeverageEntity> findAllBeveragesPageable(Pageable pageable);
+
+    Optional<Product> findByName(String name);
 }

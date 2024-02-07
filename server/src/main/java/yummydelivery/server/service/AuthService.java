@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import yummydelivery.server.dto.EmailDetails;
 import yummydelivery.server.dto.SignInDTO;
 import yummydelivery.server.dto.SignUpDTO;
 import yummydelivery.server.enums.RoleEnum;
@@ -36,9 +37,10 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
+    private final EmailService emailService;
 
     public AuthService(UserRepository userRepository, RoleRepository roleRepository, AddressRepository addressRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder,
-                       AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider) {
+                       AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider, EmailService emailService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.addressRepository = addressRepository;
@@ -46,6 +48,7 @@ public class AuthService {
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.emailService = emailService;
     }
 
     @Transactional
@@ -59,9 +62,15 @@ public class AuthService {
                 .orElseThrow(() -> new RoleNotFoundException(HttpStatus.INTERNAL_SERVER_ERROR, "No Default User Role in the database"));
 
         AddressEntity userAddress = mapDtoAddressInfoToAddress(signUpDTO);
-        UserEntity newUser = mapDtoToUser(signUpDTO,customerRole, userAddress);
+        UserEntity newUser = mapDtoToUser(signUpDTO, customerRole, userAddress);
 
         userRepository.save(newUser);
+
+        emailService.sendEmail(EmailDetails.builder()
+                .messageBody("Successful registration. You can login can login now.")
+                .recipient(newUser.getEmail())
+                .subject("Registration Success")
+                .build());
     }
 
     public String signInUser(SignInDTO signInDTO) {
@@ -81,7 +90,8 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         return jwtTokenProvider.generateJwtToken(authentication);
     }
-    private UserEntity mapDtoToUser(SignUpDTO signUpDTO,RoleEntity customerRole, AddressEntity userAddress) {
+
+    private UserEntity mapDtoToUser(SignUpDTO signUpDTO, RoleEntity customerRole, AddressEntity userAddress) {
         UserEntity newUser = new UserEntity();
         newUser.setRoles(Set.of(customerRole));
         newUser.setAddresses(List.of(userAddress));

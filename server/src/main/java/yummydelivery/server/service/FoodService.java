@@ -1,11 +1,13 @@
 package yummydelivery.server.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import yummydelivery.server.dto.foodDTO.AddFoodDTO;
 import yummydelivery.server.dto.foodDTO.FoodDTO;
 import yummydelivery.server.dto.foodDTO.UpdateFoodDTO;
@@ -16,23 +18,28 @@ import yummydelivery.server.model.FoodEntity;
 import yummydelivery.server.model.Product;
 import yummydelivery.server.repository.ProductRepository;
 import yummydelivery.server.security.AuthenticationFacade;
+import yummydelivery.server.utils.CommonUtils;
 
 
 import java.util.List;
 
 
 @Service
+@Slf4j
 public class FoodService {
     private final ProductRepository productRepository;
     private final ModelMapper modelMapper;
     private final AuthenticationFacade authenticationFacade;
-
+    private final CloudinaryService cloudinaryService;
+    private final CommonUtils utils;
 
     public FoodService(ProductRepository productRepository, ModelMapper modelMapper,
-                       AuthenticationFacade authenticationFacade) {
+                       AuthenticationFacade authenticationFacade, CloudinaryService cloudinaryService, CommonUtils utils) {
         this.productRepository = productRepository;
         this.modelMapper = modelMapper;
         this.authenticationFacade = authenticationFacade;
+        this.cloudinaryService = cloudinaryService;
+        this.utils = utils;
     }
 
     public FoodDTO getFood(Long id) {
@@ -48,17 +55,29 @@ public class FoodService {
     }
 
 
-    public void addFood(AddFoodDTO addFoodDTO) {
-
+    public void addFood(AddFoodDTO addFoodDTO, MultipartFile productImage) {
         authenticationFacade.checkIfUserIsAdmin();
-
+        if (utils.productWithThisNameExist(addFoodDTO.getName())) {
+            throw new IllegalArgumentException("Cannot use this product name. it's already assigned");
+        }
         FoodEntity foodEntity = modelMapper.map(addFoodDTO, FoodEntity.class);
+
+        if (productImage == null || productImage.isEmpty()) {
+            String defaultProductImageURL = "https://res.cloudinary.com/dncjjyvqi/image/upload/v1707229014/YummyDeliveryImages/defaultProductImage.png";
+            foodEntity.setImageURL(defaultProductImageURL);
+            log.info("Product image is not provided. Default one is used");
+        } else {
+            cloudinaryService.validateImageFile(productImage);
+            String imageUrl = cloudinaryService.uploadImage(productImage, addFoodDTO.getName());
+            foodEntity.setImageURL(imageUrl);
+            log.info("Product image is provided and uploaded successfully to Cloudinary");
+        }
         foodEntity.setProductType(ProductTypeEnum.FOOD);
         productRepository.save(foodEntity);
     }
 
     public Page<FoodDTO> getAllFoodsByType(String foodType, int page) {
-        if(page > 0) page -= 1;
+        if (page > 0) page -= 1;
         FoodTypeEnum typeEnum = FoodTypeEnum.valueOf(foodType.toUpperCase());
         Page<FoodEntity> foodsPage = productRepository
                 .findAllByProductTypePageable(typeEnum, PageRequest.of(page, 6));
@@ -73,19 +92,21 @@ public class FoodService {
     }
 
     public void deleteFoodOrBeverage(Long id) {
-
         authenticationFacade.checkIfUserIsAdmin();
 
-        if (!productRepository.existsById(id)) {
-            throw new FoodNotFoundException(HttpStatus.NOT_FOUND, "Product with id " + id + " not found");
-        }
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new FoodNotFoundException(HttpStatus.NOT_FOUND, "Product with id " + id + " not found"));
+
+        cloudinaryService.deleteProductImageFromCloudinary(product.getImageURL());
         productRepository.deleteById(id);
     }
 
-    public void updateFood(Long id, UpdateFoodDTO updateFoodDTO) {
 
+    public void updateFood(Long id, UpdateFoodDTO updateFoodDTO, MultipartFile productImage) {
         authenticationFacade.checkIfUserIsAdmin();
-
+        if (utils.productWithThisNameExist(updateFoodDTO.getName())) {
+            throw new IllegalArgumentException("Cannot use this product name. it's already assigned");
+        }
         if (!productRepository.existsById(id)) {
             throw new FoodNotFoundException(HttpStatus.NOT_FOUND, "Product with id " + id + " not found");
         }
@@ -97,12 +118,25 @@ public class FoodService {
         FoodEntity foodEntity;
         foodEntity = (FoodEntity) product;
 
-        foodEntity.setName(updateFoodDTO.getName());
-        foodEntity.setFoodTypeEnum(updateFoodDTO.getFoodTypeEnum());
-        foodEntity.setPrice(updateFoodDTO.getPrice());
-        foodEntity.setGrams(updateFoodDTO.getGrams());
-        foodEntity.setImageURL(updateFoodDTO.getImageURL());
-        foodEntity.setIngredients(updateFoodDTO.getIngredients());
+        if (productImage == null || productImage.isEmpty()) {
+            updateFoodEntity(foodEntity, updateFoodDTO);
+            log.info("Product image is not provided");
+        } else {
+            cloudinaryService.validateImageFile(productImage);
+            String newImageURL = cloudinaryService.uploadImage(productImage, updateFoodDTO.getName());
+            updateFoodEntity(foodEntity, updateFoodDTO, newImageURL);
+            log.info("Product image is provided and uploaded successfully to Cloudinary");
+        }
+
         productRepository.save(foodEntity);
+    }
+
+    private void updateFoodEntity(FoodEntity foodEntity, UpdateFoodDTO updateFoodDTO) {
+        modelMapper.map(updateFoodDTO, foodEntity);
+    }
+
+    private void updateFoodEntity(FoodEntity foodEntity, UpdateFoodDTO updateFoodDTO, String newImageURL) {
+        modelMapper.map(updateFoodDTO, foodEntity);
+        foodEntity.setImageURL(newImageURL);
     }
 }

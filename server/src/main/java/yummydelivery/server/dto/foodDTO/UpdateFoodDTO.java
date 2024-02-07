@@ -27,6 +27,5 @@ public class UpdateFoodDTO {
 
     @NotNull
     private FoodTypeEnum foodTypeEnum;
-    private String imageURL;
     private List<String> ingredients;
 }

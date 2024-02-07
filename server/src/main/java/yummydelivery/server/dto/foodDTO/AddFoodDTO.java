@@ -1,8 +1,7 @@
 package yummydelivery.server.dto.foodDTO;
 
-import jakarta.persistence.Column;
+
 import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,6 +29,5 @@ public class AddFoodDTO {
 
     @NotNull
     private FoodTypeEnum foodTypeEnum;
-    private String imageURL;
     private List<String> ingredients;
 }

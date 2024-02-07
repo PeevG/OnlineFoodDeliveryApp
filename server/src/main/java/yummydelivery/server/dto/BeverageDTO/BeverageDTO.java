@@ -13,7 +13,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class AddOrUpdateBeverageDTO {
+public class BeverageDTO {
     @NotNull(message = "Name is required")
     @NotBlank(message = "Name must be minimum 3 characters")
     private String name;

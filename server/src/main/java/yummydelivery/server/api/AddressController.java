@@ -1,5 +1,6 @@
 package yummydelivery.server.api;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.data.domain.Page;
@@ -11,8 +12,8 @@ import yummydelivery.server.dto.AddressDTO;
 import yummydelivery.server.dto.view.AddressView;
 import yummydelivery.server.dto.ResponseDTO;
 import yummydelivery.server.service.AddressService;
+import yummydelivery.server.utils.CommonUtils;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 import static yummydelivery.server.config.ApplicationConstants.API_BASE;
@@ -21,11 +22,14 @@ import static yummydelivery.server.config.ApplicationConstants.API_BASE;
 @RequestMapping(API_BASE + "/addresses")
 public class AddressController {
     private final AddressService addressService;
+    private final CommonUtils utils;
 
-    public AddressController(AddressService addressService) {
+    public AddressController(AddressService addressService, CommonUtils utils) {
         this.addressService = addressService;
+        this.utils = utils;
     }
 
+    @Operation(summary = "Get all user addresses (Paginated)")
     @GetMapping
     public ResponseEntity<ResponseDTO<Page<AddressView>>> getUserAddresses(@RequestParam(defaultValue = "0") int page) {
         Page<AddressView> userAddresses = addressService.getUserAddresses(page);
@@ -40,15 +44,12 @@ public class AddressController {
                 );
     }
 
+    @Operation(summary = "Add new user address")
     @PostMapping()
     public ResponseEntity<ResponseDTO<AddressDTO>> addNewAddress(@Valid @RequestBody AddressDTO addressDTO,
                                                                  BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            String errors = bindingResult
-                    .getAllErrors()
-                    .stream()
-                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                    .collect(Collectors.joining("; "));
+            String errors = utils.collectErrorMessagesToString(bindingResult);
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body(
@@ -71,9 +72,23 @@ public class AddressController {
                 );
     }
 
+    @Operation(summary = "Update user address by address Id")
     @PutMapping("/{addressId}")
     public ResponseEntity<ResponseDTO<AddressDTO>> updateAddressById(@Valid @RequestBody AddressDTO addressDTO,
-                                                                     @PathVariable(name = "addressId") Long addressId) {
+                                                                     @PathVariable(name = "addressId") Long addressId,
+                                                                     BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            String errors = utils.collectErrorMessagesToString(bindingResult);
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(
+                            ResponseDTO
+                                    .<AddressDTO>builder()
+                                    .statusCode(HttpStatus.BAD_REQUEST.value())
+                                    .message(errors)
+                                    .build()
+                    );
+        }
         AddressDTO updatedAddress = addressService.updateAddress(addressDTO, addressId);
 
         return ResponseEntity
@@ -88,6 +103,7 @@ public class AddressController {
                 );
     }
 
+    @Operation(summary = "Delete user address by Id")
     @DeleteMapping("/{addressId}")
     public ResponseEntity<ResponseDTO<Void>> deleteAddressById(@PathVariable(name = "addressId") Long addressId) {
         addressService.deleteAddress(addressId);
