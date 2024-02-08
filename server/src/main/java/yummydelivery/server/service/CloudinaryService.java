@@ -1,12 +1,19 @@
 package yummydelivery.server.service;
 
 import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
+import org.imgscalr.Scalr;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import yummydelivery.server.exceptions.ApiException;
+import yummydelivery.server.exceptions.CloudinaryException;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -14,6 +21,7 @@ import java.util.Map;
 
 
 @Service
+@Slf4j
 public class CloudinaryService {
     private final Cloudinary cloudinary;
 
@@ -25,40 +33,58 @@ public class CloudinaryService {
     public String uploadImage(MultipartFile image, String beverageName) {
         Map<String, String> options = new HashMap<>();
         options.put("folder", "YummyDeliveryImages");
-        options.put("public_id", beverageName);
-        String transformation = "w_300,h_300,c_scale";
-        options.put("transformation", transformation);
+        options.put("public_id", beverageName.trim().replaceAll(" ", ""));
         try {
-            File file = convertToFile(image);
+            File file = resizeAndConvertToFile(image);
             @SuppressWarnings("unchecked")
             Map<String, String> uploadResult = cloudinary.uploader().upload(file, options);
             return uploadResult.get("url");
         } catch (IOException e) {
-            throw new ApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to upload the image: " + e.getMessage());
+            throw new CloudinaryException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to upload the image: " + e.getMessage());
         }
-    }
-
-    private File convertToFile(MultipartFile image) {
-        File file;
-        try {
-            file = File.createTempFile("temp-file", image.getOriginalFilename());
-            image.transferTo(file);
-        } catch (IOException e) {
-            throw new ApiException(HttpStatus.INTERNAL_SERVER_ERROR, "File converting failed: " + e.getMessage());
-        }
-        return file;
     }
 
     public void validateImageFile(MultipartFile productImage) {
         boolean isValid = productImage != null &&
+                !productImage.isEmpty() &&
                 productImage.getContentType() != null &&
                 (productImage.getContentType().equals(MediaType.IMAGE_JPEG_VALUE) ||
                         productImage.getContentType().equals(MediaType.IMAGE_PNG_VALUE));
         if (!isValid) {
             throw new IllegalArgumentException("Product image media type must be Jpeg or Png");
         }
-        if (productImage.getSize() > 0) {
-            throw new IllegalArgumentException("Multiple files selected.");
+    }
+
+    public void deleteProductImageFromCloudinary(String productImageURL) {
+        String urlPublicKey = getCloudinaryPublicId(productImageURL);
+        try {
+            cloudinary.uploader().destroy(urlPublicKey, ObjectUtils.emptyMap());
+            log.info("Image successfully deleted from Cloudinary");
+        } catch (IOException e) {
+            log.info("Failed to delete product image from Cloudinary");
+            throw new CloudinaryException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to delete product image from Cloudinary");
         }
+    }
+
+    private String getCloudinaryPublicId(String productImageURL) {
+        String substring = productImageURL.substring(productImageURL.lastIndexOf("/") + 1, productImageURL.length() - 4);
+        return "YummyDeliveryImages/" + substring;
+    }
+
+    private File resizeAndConvertToFile(MultipartFile productImage) {
+        BufferedImage bufferedImage;
+        File file;
+        try {
+            bufferedImage = ImageIO.read(productImage.getInputStream());
+            BufferedImage resized = Scalr.resize(bufferedImage, Scalr.Method.BALANCED, Scalr.Mode.AUTOMATIC, 350, 350);
+            file = File.createTempFile("temp-file", productImage.getOriginalFilename());
+
+            String format = FilenameUtils.getExtension(productImage.getOriginalFilename());
+            if (format == null) format = "jpg";
+            ImageIO.write(resized, format, file);
+        } catch (IOException e) {
+            throw new ApiException(HttpStatus.INTERNAL_SERVER_ERROR, "File converting failed: " + e.getMessage());
+        }
+        return file;
     }
 }
