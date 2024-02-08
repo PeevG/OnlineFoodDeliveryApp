@@ -1,16 +1,18 @@
 package yummydelivery.server.api;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import yummydelivery.server.dto.ResponseDTO;
 import yummydelivery.server.dto.UpdatePasswordDTO;
 import yummydelivery.server.service.UserService;
-
-import java.util.stream.Collectors;
+import yummydelivery.server.utils.CommonUtils;
 
 import static yummydelivery.server.config.ApplicationConstants.API_BASE;
 
@@ -18,20 +20,19 @@ import static yummydelivery.server.config.ApplicationConstants.API_BASE;
 @RequestMapping(API_BASE)
 public class UserController {
     private final UserService userService;
+    private final CommonUtils utils;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, CommonUtils utils) {
         this.userService = userService;
+        this.utils = utils;
     }
 
+    @Operation(summary = "Change user password")
     @PutMapping("/user")
     public ResponseEntity<ResponseDTO<Void>> changeUserPassword(@Valid @RequestBody UpdatePasswordDTO userInfoDTO,
-                                                                             BindingResult bindingResult) {
+                                                                BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            String errors = bindingResult
-                    .getAllErrors()
-                    .stream()
-                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                    .collect(Collectors.joining("; "));
+            String errors = utils.collectErrorMessagesToString(bindingResult);
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body(

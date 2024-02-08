@@ -15,10 +15,7 @@ import yummydelivery.server.exceptions.BeverageNotFoundException;
 import yummydelivery.server.exceptions.InvalidProductTypeException;
 import yummydelivery.server.exceptions.ProductNotFoundException;
 import yummydelivery.server.model.BeverageEntity;
-
-
 import yummydelivery.server.model.Product;
-
 import yummydelivery.server.repository.ProductRepository;
 import yummydelivery.server.security.AuthenticationFacade;
 import yummydelivery.server.utils.CommonUtils;

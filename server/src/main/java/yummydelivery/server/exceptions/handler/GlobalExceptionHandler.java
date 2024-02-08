@@ -1,5 +1,6 @@
 package yummydelivery.server.exceptions.handler;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -24,12 +25,12 @@ public class GlobalExceptionHandler {
     }
     @ExceptionHandler({IllegalArgumentException.class})
     public ResponseEntity<Object> handleIllegalArgumentExceptions(IllegalArgumentException ex) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(
                         ResponseDTO
                                 .builder()
                                 .message(ex.getMessage())
-                                .statusCode(HttpStatus.UNAUTHORIZED.value())
+                                .statusCode(HttpStatus.BAD_REQUEST.value())
                                 .body(null)
                                 .build()
                 );

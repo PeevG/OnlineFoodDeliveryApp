@@ -1,7 +1,6 @@
 package yummydelivery.server.service;
 
 import jakarta.transaction.Transactional;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -33,18 +32,16 @@ public class AuthService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final AddressRepository addressRepository;
-    private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final EmailService emailService;
 
-    public AuthService(UserRepository userRepository, RoleRepository roleRepository, AddressRepository addressRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder,
+    public AuthService(UserRepository userRepository, RoleRepository roleRepository, AddressRepository addressRepository, PasswordEncoder passwordEncoder,
                        AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider, EmailService emailService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.addressRepository = addressRepository;
-        this.modelMapper = modelMapper;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.jwtTokenProvider = jwtTokenProvider;

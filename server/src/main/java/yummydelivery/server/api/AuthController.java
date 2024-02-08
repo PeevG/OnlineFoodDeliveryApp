@@ -1,7 +1,7 @@
 package yummydelivery.server.api;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -11,8 +11,8 @@ import yummydelivery.server.dto.ResponseDTO;
 import yummydelivery.server.dto.SignInDTO;
 import yummydelivery.server.dto.SignUpDTO;
 import yummydelivery.server.service.AuthService;
+import yummydelivery.server.utils.CommonUtils;
 
-import java.util.stream.Collectors;
 
 import static yummydelivery.server.config.ApplicationConstants.API_BASE;
 
@@ -20,17 +20,19 @@ import static yummydelivery.server.config.ApplicationConstants.API_BASE;
 @RequestMapping(path = API_BASE)
 public class AuthController {
     private final AuthService authService;
+    private final CommonUtils utils;
 
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService, CommonUtils utils) {
         this.authService = authService;
+        this.utils = utils;
     }
 
+    @Operation(summary = "Register new user")
     @PostMapping("/auth/register")
     public ResponseEntity<ResponseDTO<Object>> signUpUser(@Valid @RequestBody SignUpDTO signUpDTO,
                                                           BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            String errorMessages = bindingResult.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage)
-                    .collect(Collectors.joining("; "));
+            String errorMessages = utils.collectErrorMessagesToString(bindingResult);
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body(
@@ -53,6 +55,7 @@ public class AuthController {
                 );
     }
 
+    @Operation(summary = "Login user")
     @PostMapping("/auth/login")
     public ResponseEntity<ResponseDTO<JwtResponseDTO>> signInUser(@Valid @RequestBody SignInDTO signInDTO) {
 
