@@ -31,27 +31,20 @@ public class CartService {
         this.productRepository = productRepository;
     }
 
-    public void addItemToShoppingCart(Long foodId) {
+    public void addItemToShoppingCart(Long productId) {
         authenticationFacade.checkIfUserIsAuthenticated();
 
         Product product = productRepository
-                .findById(foodId).orElseThrow(() -> new ProductNotFoundException(HttpStatus.NOT_FOUND, "Product not found"));
+                .findById(productId).orElseThrow(() -> new ProductNotFoundException(HttpStatus.NOT_FOUND, "Product not found"));
 
         UserEntity user = userService.getCurrentUserByUsername();
         ShoppingCartEntity shoppingCartEntity = user.getCart();
-        CartItem cartItem = findItemInShoppingCart(shoppingCartEntity.getCartItems(), foodId);
+        CartItem cartItem = findItemInShoppingCart(shoppingCartEntity.getCartItems(), productId);
 
         if (cartItem == null) {
-            Optional<CartItem> item = cartItemRepository.findByProductId(foodId);
-            if (item.isEmpty()) {
-                cartItem = new CartItem();
-                cartItem.setProduct(product);
-                cartItem.setQuantity(1);
-                cartItemRepository.save(cartItem);
-            } else {
-                item.get().setQuantity(1);
-                cartItem = item.get();
-            }
+            cartItem = new CartItem();
+            cartItem.setProduct(product);
+            cartItem.setQuantity(1);
             shoppingCartEntity.getCartItems().add(cartItem);
         } else {
             cartItem.setQuantity(cartItem.getQuantity() + 1);
@@ -59,6 +52,7 @@ public class CartService {
         cartItem.setPrice(cartItem.getQuantity() * product.getPrice());
 
         shoppingCartEntity.setCartPrice(getShoppingCartTotalPrice(shoppingCartEntity));
+        cartItemRepository.save(cartItem);
         cartRepository.save(shoppingCartEntity);
     }
 
@@ -78,12 +72,14 @@ public class CartService {
 
         UserEntity user = userService.getCurrentUserByUsername();
         CartItem itemToRemove = cartItemRepository
-                .findById(cartItemId).orElseThrow(() -> new ShoppingCartException(HttpStatus.NOT_FOUND, "Cart Item not found"));
+                .findById(cartItemId)
+                .orElseThrow(() -> new ShoppingCartException(HttpStatus.NOT_FOUND, "Cart Item not found"));
 
         ShoppingCartEntity userCart = user.getCart();
         userCart.getCartItems().remove(itemToRemove);
 
         userCart.setCartPrice(getShoppingCartTotalPrice(userCart));
+        cartItemRepository.delete(itemToRemove);
         userRepository.save(user);
     }
 
