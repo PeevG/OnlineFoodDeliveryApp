@@ -27,7 +27,6 @@ public class BeanConfiguration {
 
     @Bean
     public Cloudinary cloudinary() {
-        log.info(cloudinaryURL);
         return new Cloudinary(cloudinaryURL);
     }
 }

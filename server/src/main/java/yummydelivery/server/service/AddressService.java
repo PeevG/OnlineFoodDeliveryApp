@@ -91,7 +91,7 @@ public class AddressService {
         addressRepository.delete(address);
     }
 
-    private boolean addressNotBelongToYou(AddressEntity address) {
+    protected boolean addressNotBelongToYou(AddressEntity address) {
         String userName = authenticationFacade.getAuthentication().getName();
         List<AddressEntity> userAddresses = addressRepository.getAddressEntitiesByUsername(userName);
         return !userAddresses.contains(address);

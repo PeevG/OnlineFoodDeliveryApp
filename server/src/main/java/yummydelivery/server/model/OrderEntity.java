@@ -3,10 +3,7 @@ package yummydelivery.server.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.scheduling.annotation.Scheduled;
 import yummydelivery.server.enums.OrderStatusEnum;
@@ -21,6 +18,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
+@Data
 @Table(name = "orders")
 public class OrderEntity {
     @Id

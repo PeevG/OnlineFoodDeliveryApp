@@ -7,6 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Setter
+@Data
 @Entity
 public class BeverageEntity extends Product {
     private int milliliters;

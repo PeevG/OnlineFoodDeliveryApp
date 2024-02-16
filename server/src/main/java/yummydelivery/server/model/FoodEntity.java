@@ -13,6 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
+@Data
 @Builder
 public class FoodEntity extends Product {
 

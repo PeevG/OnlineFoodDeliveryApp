@@ -64,20 +64,17 @@ public class AuthService {
         userRepository.save(newUser);
 
         emailService.sendEmail(EmailDetails.builder()
-                .messageBody("Successful registration. You can login can login now.")
+                .messageBody("Successful registration. Enjoy the delicious food offered by Yummy Delivery.")
                 .recipient(newUser.getEmail())
                 .subject("Registration Success")
                 .build());
     }
 
     public String signInUser(SignInDTO signInDTO) {
-        if (!userRepository.existsByEmail(signInDTO.getEmail())) {
-            throw new InvalidCredentialsException(HttpStatus.UNAUTHORIZED, "Incorrect email!");
-        }
+        UserEntity user = userRepository.findByEmail(signInDTO.getEmail())
+                .orElseThrow(() -> new InvalidCredentialsException(HttpStatus.UNAUTHORIZED, "Incorrect email!"));
 
-        Optional<UserEntity> byEmail = userRepository.findByEmail(signInDTO.getEmail());
-
-        if (!passwordEncoder.matches(signInDTO.getPassword(), byEmail.get().getPassword())) {
+        if (!passwordEncoder.matches(signInDTO.getPassword(), user.getPassword())) {
             throw new InvalidCredentialsException(HttpStatus.UNAUTHORIZED, "Incorrect password!");
         }
 

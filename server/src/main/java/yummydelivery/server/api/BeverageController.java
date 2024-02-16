@@ -1,10 +1,12 @@
 package yummydelivery.server.api;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,9 +15,7 @@ import yummydelivery.server.dto.ResponseDTO;
 import yummydelivery.server.dto.view.BeverageView;
 import yummydelivery.server.service.BeverageService;
 import yummydelivery.server.service.FoodService;
-import io.swagger.v3.oas.annotations.*;
 import yummydelivery.server.utils.CommonUtils;
-
 
 import static yummydelivery.server.config.ApplicationConstants.API_BASE;
 
@@ -64,7 +64,7 @@ public class BeverageController {
                 );
     }
 
-
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Adding beverage to the menu. Admin role required!",
             description = "The content-Type of the JSON object must be configured as application/json. " +
                     "Upload product image to Cloudinary and set CloudinaryURL as imageURL")
@@ -98,7 +98,7 @@ public class BeverageController {
                                 .build()
                 );
     }
-
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Update beverage by Id. Admin role required!",
             description = "The content-Type of the JSON object must be configured as application/json. " +
                     "If new product image is provided its uploaded to Cloudinary and beverage imageURL is updated")
@@ -130,7 +130,7 @@ public class BeverageController {
                                 .build()
                 );
     }
-
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Delete beverage by Id. Admin role required!")
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponseDTO<Void>> deleteBeverage(@PathVariable Long id) {
