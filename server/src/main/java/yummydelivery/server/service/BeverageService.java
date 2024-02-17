@@ -17,7 +17,6 @@ import yummydelivery.server.exceptions.ProductNotFoundException;
 import yummydelivery.server.model.BeverageEntity;
 import yummydelivery.server.model.Product;
 import yummydelivery.server.repository.ProductRepository;
-import yummydelivery.server.security.AuthenticationFacade;
 import yummydelivery.server.utils.CommonUtils;
 
 import java.util.List;
@@ -27,14 +26,12 @@ import java.util.List;
 public class BeverageService {
     private final ProductRepository productRepository;
     private final ModelMapper modelMapper;
-    private final AuthenticationFacade authenticationFacade;
     private final CloudinaryService cloudinaryService;
     private final CommonUtils utils;
 
-    public BeverageService(ProductRepository productRepository, ModelMapper modelMapper, AuthenticationFacade authenticationFacade, CloudinaryService cloudinaryService, CommonUtils utils) {
+    public BeverageService(ProductRepository productRepository, ModelMapper modelMapper, CloudinaryService cloudinaryService, CommonUtils utils) {
         this.productRepository = productRepository;
         this.modelMapper = modelMapper;
-        this.authenticationFacade = authenticationFacade;
         this.cloudinaryService = cloudinaryService;
         this.utils = utils;
     }
@@ -52,7 +49,6 @@ public class BeverageService {
     }
 
     public void addBeverage(BeverageDTO addBeverageDTO, MultipartFile productImage) {
-        authenticationFacade.checkIfUserIsAdmin();
         if (utils.productWithThisNameExist(addBeverageDTO.getName())) {
             throw new IllegalArgumentException("Cannot use this product name. it's already assigned");
         }
@@ -74,7 +70,6 @@ public class BeverageService {
 
 
     public void updateBeverage(Long id, BeverageDTO dto, MultipartFile imageURL) {
-        authenticationFacade.checkIfUserIsAdmin();
         if (utils.productWithThisNameExist(dto.getName())) {
             throw new IllegalArgumentException("Cannot use this product name. it's already assigned");
         }
@@ -97,14 +92,6 @@ public class BeverageService {
         productRepository.save(beverageEntity);
     }
 
-    private Product getProductByIdOrElseThrow(Long id) {
-        return productRepository
-                .findById(id)
-                .orElseThrow(
-                        () -> new BeverageNotFoundException(HttpStatus.NOT_FOUND, "Product with id " + id + " not found")
-                );
-    }
-
     public Page<BeverageView> getAllBeverages(int page) {
         Page<BeverageEntity> beveragesPageable = productRepository.findAllBeveragesPageable(PageRequest.of(page, 6));
 
@@ -115,6 +102,14 @@ public class BeverageService {
                 .toList();
 
         return new PageImpl<>(viewList, beveragesPageable.getPageable(), beveragesPageable.getTotalElements());
+    }
+
+    private Product getProductByIdOrElseThrow(Long id) {
+        return productRepository
+                .findById(id)
+                .orElseThrow(
+                        () -> new BeverageNotFoundException(HttpStatus.NOT_FOUND, "Product with id " + id + " not found")
+                );
     }
 
     private void updateBeverage(BeverageEntity beverageEntity, BeverageDTO dto) {

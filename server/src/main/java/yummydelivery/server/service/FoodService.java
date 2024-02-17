@@ -13,13 +13,13 @@ import yummydelivery.server.dto.foodDTO.FoodDTO;
 import yummydelivery.server.dto.foodDTO.UpdateFoodDTO;
 import yummydelivery.server.enums.FoodTypeEnum;
 import yummydelivery.server.enums.ProductTypeEnum;
-import yummydelivery.server.exceptions.*;
+import yummydelivery.server.exceptions.FoodNotFoundException;
+import yummydelivery.server.exceptions.InvalidProductTypeException;
+import yummydelivery.server.exceptions.ProductNotFoundException;
 import yummydelivery.server.model.FoodEntity;
 import yummydelivery.server.model.Product;
 import yummydelivery.server.repository.ProductRepository;
-import yummydelivery.server.security.AuthenticationFacade;
 import yummydelivery.server.utils.CommonUtils;
-
 
 import java.util.List;
 
@@ -29,20 +29,17 @@ import java.util.List;
 public class FoodService {
     private final ProductRepository productRepository;
     private final ModelMapper modelMapper;
-    private final AuthenticationFacade authenticationFacade;
     private final CloudinaryService cloudinaryService;
     private final CommonUtils utils;
 
-    public FoodService(ProductRepository productRepository, ModelMapper modelMapper,
-                       AuthenticationFacade authenticationFacade, CloudinaryService cloudinaryService, CommonUtils utils) {
+    public FoodService(ProductRepository productRepository, ModelMapper modelMapper, CloudinaryService cloudinaryService, CommonUtils utils) {
         this.productRepository = productRepository;
         this.modelMapper = modelMapper;
-        this.authenticationFacade = authenticationFacade;
         this.cloudinaryService = cloudinaryService;
         this.utils = utils;
     }
 
-    public FoodDTO getFood(Long id) {
+    public FoodDTO getFoodById(Long id) {
         Product product = productRepository
                 .findById(id).orElseThrow(() -> new ProductNotFoundException(HttpStatus.NOT_FOUND, "Product not found"));
         FoodEntity foodEntityToReturn;
@@ -56,7 +53,6 @@ public class FoodService {
 
 
     public void addFood(AddFoodDTO addFoodDTO, MultipartFile productImage) {
-        authenticationFacade.checkIfUserIsAdmin();
         if (utils.productWithThisNameExist(addFoodDTO.getName())) {
             throw new IllegalArgumentException("Cannot use this product name. it's already assigned");
         }
@@ -92,10 +88,9 @@ public class FoodService {
     }
 
     public void deleteFoodOrBeverage(Long id) {
-        authenticationFacade.checkIfUserIsAdmin();
-
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new FoodNotFoundException(HttpStatus.NOT_FOUND, "Product with id " + id + " not found"));
+                .orElseThrow(
+                        () -> new ProductNotFoundException(HttpStatus.NOT_FOUND, "Product with id " + id + " not found"));
 
         cloudinaryService.deleteProductImageFromCloudinary(product.getImageURL());
         productRepository.deleteById(id);
@@ -103,39 +98,35 @@ public class FoodService {
 
 
     public void updateFood(Long id, UpdateFoodDTO updateFoodDTO, MultipartFile productImage) {
-        authenticationFacade.checkIfUserIsAdmin();
         if (utils.productWithThisNameExist(updateFoodDTO.getName())) {
             throw new IllegalArgumentException("Cannot use this product name. it's already assigned");
         }
-        if (!productRepository.existsById(id)) {
-            throw new FoodNotFoundException(HttpStatus.NOT_FOUND, "Product with id " + id + " not found");
-        }
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new FoodNotFoundException(HttpStatus.NOT_FOUND, "Product with id " + id + " not found"));
 
-        Product product = productRepository.findById(id).get();
         if (!product.getProductType().equals(ProductTypeEnum.FOOD)) {
             throw new InvalidProductTypeException(HttpStatus.BAD_REQUEST, "To update food, product type must be 'Food'");
         }
         FoodEntity foodEntity;
         foodEntity = (FoodEntity) product;
-
         if (productImage == null || productImage.isEmpty()) {
-            updateFoodEntity(foodEntity, updateFoodDTO);
+            mapDtoToFoodEntity(updateFoodDTO, foodEntity);
             log.info("Product image is not provided");
         } else {
             cloudinaryService.validateImageFile(productImage);
             String newImageURL = cloudinaryService.uploadImage(productImage, updateFoodDTO.getName());
-            updateFoodEntity(foodEntity, updateFoodDTO, newImageURL);
+            mapDtoToFoodEntityWithNewImageURL(updateFoodDTO, foodEntity, newImageURL);
             log.info("Product image is provided and uploaded successfully to Cloudinary");
         }
 
         productRepository.save(foodEntity);
     }
 
-    private void updateFoodEntity(FoodEntity foodEntity, UpdateFoodDTO updateFoodDTO) {
+    protected void mapDtoToFoodEntity(UpdateFoodDTO updateFoodDTO, FoodEntity foodEntity) {
         modelMapper.map(updateFoodDTO, foodEntity);
     }
 
-    private void updateFoodEntity(FoodEntity foodEntity, UpdateFoodDTO updateFoodDTO, String newImageURL) {
+    protected void mapDtoToFoodEntityWithNewImageURL(UpdateFoodDTO updateFoodDTO, FoodEntity foodEntity, String newImageURL) {
         modelMapper.map(updateFoodDTO, foodEntity);
         foodEntity.setImageURL(newImageURL);
     }
