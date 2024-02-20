@@ -54,7 +54,8 @@ public class OrderService {
 
     public Page<OrderView> getUserOrders(int page) {
         if (page > 0) page -= 1;
-        UserEntity currentUser = getCurrentUserWithOrders();
+        UserEntity currentUser = userRepository.findByEmail(authenticationFacade.getAuthentication().getName())
+                .orElseThrow(() -> new UserNotFoundException(HttpStatus.NOT_FOUND,"User not found"));
 
         Page<OrderEntity> ordersPageable = orderRepository.findAllByUserId(currentUser.getId(), PageRequest.of(page, 6));
         List<OrderView> mappedOrders = ordersPageable
@@ -66,7 +67,7 @@ public class OrderService {
         return new PageImpl<>(mappedOrders, ordersPageable.getPageable(), ordersPageable.getTotalElements());
     }
 
-    private static void clearUserShoppingCart(UserEntity currentUser) {
+    protected static void clearUserShoppingCart(UserEntity currentUser) {
         currentUser.getCart().getCartItems().clear();
         currentUser.getCart().setCartPrice(0.0);
     }

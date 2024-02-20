@@ -30,10 +30,10 @@ public class CloudinaryService {
     }
 
 
-    public String uploadImage(MultipartFile image, String beverageName) {
+    public String uploadImage(MultipartFile image, String imageName) {
         Map<String, String> options = new HashMap<>();
         options.put("folder", "YummyDeliveryImages");
-        options.put("public_id", beverageName.trim().replaceAll(" ", ""));
+        options.put("public_id", imageName.trim().replaceAll(" ", ""));
         try {
             File file = resizeAndConvertToFile(image);
             @SuppressWarnings("unchecked")
@@ -50,6 +50,12 @@ public class CloudinaryService {
                 productImage.getContentType() != null &&
                 (productImage.getContentType().equals(MediaType.IMAGE_JPEG_VALUE) ||
                         productImage.getContentType().equals(MediaType.IMAGE_PNG_VALUE));
+        log.debug("Content type should be either: " + MediaType.IMAGE_JPEG_VALUE);
+        log.debug("or: " + MediaType.IMAGE_PNG_VALUE);
+        log.debug("Product image is null:" + (productImage == null));
+        log.debug("Product content type is null:" + (productImage.getContentType() == null));
+        log.debug("Current content type is: " + productImage.getContentType());
+        log.debug("Product image is empty: " + productImage.isEmpty());
         if (!isValid) {
             throw new IllegalArgumentException("Product image media type must be Jpeg or Png");
         }
@@ -71,7 +77,7 @@ public class CloudinaryService {
         return "YummyDeliveryImages/" + substring;
     }
 
-    private File resizeAndConvertToFile(MultipartFile productImage) {
+    protected File resizeAndConvertToFile(MultipartFile productImage) {
         BufferedImage bufferedImage;
         File file;
         try {
