@@ -12,8 +12,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 @Slf4j
 public class BeanConfiguration {
-    @Value("${CLOUDINARY_URL}")
-    private String cloudinaryURL;
+    @Value("${CLOUDINARY_CLOUD_NAME}")
+    private String CLOUDINARY_CLOUD_NAME;
+    @Value("${CLOUDINARY_API_KEY}")
+    private String CLOUDINARY_API_KEY;
+    @Value("${CLOUDINARY_API_SECRET}")
+    private String CLOUDINARY_API_SECRET;
 
     @Bean
     public ModelMapper modelMapper() {
@@ -27,6 +31,7 @@ public class BeanConfiguration {
 
     @Bean
     public Cloudinary cloudinary() {
+        String cloudinaryURL = "cloudinary://" + CLOUDINARY_API_KEY + ":" + CLOUDINARY_API_SECRET + "@" + CLOUDINARY_CLOUD_NAME;
         return new Cloudinary(cloudinaryURL);
     }
 }
