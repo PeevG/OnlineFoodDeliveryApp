@@ -1,0 +1,46 @@
+name: "yummydelivery"
+
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    networks:
+      - postgres
+    restart: unless-stopped
+    env_file: .env
+  yummydelivery:
+    container_name: yummyDelivery-app
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    environment:
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_URL=${DB_URL}
+      - CLOUDINARY_NAME=${CLOUDINARY_CLOUD_NAME}
+      - CLOUDINARY_KEY=${CLOUDINARY_API_KEY}
+      - CLOUDINARY_SECRET=${CLOUDINARY_API_SECRET}
+      - EMAIL_SENDER=${SENDER_MAIL_ADDRESS}
+      - EMAIL_SENDER_PASSWORD=${SENDER_MAIL_PASSWORD}
+    #      - SPRING_PROFILES_ACTIVE=docker
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    networks:
+      - postgres
+    env_file: .env
+
+networks:
+  postgres:
+    driver: bridge
+
+volumes:
+  postgres:
