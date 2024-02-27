@@ -2,19 +2,16 @@ package yummydelivery.server.api;
 
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import yummydelivery.server.dto.AddressDTO;
-import yummydelivery.server.dto.view.AddressView;
 import yummydelivery.server.dto.ResponseDTO;
+import yummydelivery.server.dto.view.AddressView;
 import yummydelivery.server.service.AddressService;
 import yummydelivery.server.utils.CommonUtils;
-
-import java.util.stream.Collectors;
 
 import static yummydelivery.server.config.ApplicationConstants.API_BASE;
 

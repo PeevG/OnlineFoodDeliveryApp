@@ -24,7 +24,6 @@ import yummydelivery.server.repository.UserRepository;
 import yummydelivery.server.security.JwtTokenProvider;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 @Service

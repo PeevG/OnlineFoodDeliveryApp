@@ -4,7 +4,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.*;
@@ -15,7 +14,7 @@ import yummydelivery.server.dto.EmailDetails;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-class EmailServiceTest {
+class EmailServiceTestUT {
 
     @Mock
     private JavaMailSender javaMailSender;

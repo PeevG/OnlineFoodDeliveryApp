@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.Mockito.*;
 
-class CloudinaryServiceTest {
+class CloudinaryServiceTestUT {
     @Mock
     private Cloudinary cloudinary;
     @InjectMocks

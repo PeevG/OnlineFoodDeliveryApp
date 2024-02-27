@@ -9,7 +9,6 @@ import yummydelivery.server.dto.AddressDTO;
 import yummydelivery.server.dto.view.AddressView;
 import yummydelivery.server.exceptions.AddressNotFoundException;
 import yummydelivery.server.exceptions.UnauthorizedException;
-import yummydelivery.server.exceptions.UserNotFoundException;
 import yummydelivery.server.model.AddressEntity;
 import yummydelivery.server.model.UserEntity;
 import yummydelivery.server.repository.AddressRepository;

@@ -18,7 +18,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-class UserServiceTest {
+class UserServiceTestUT {
 
     @Mock
     private UserRepository userRepository;

@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-class FoodServiceTest {
+class FoodServiceTestUT {
     @Mock
     private ProductRepository productRepository;
     @Mock

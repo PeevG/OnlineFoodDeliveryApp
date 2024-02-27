@@ -24,7 +24,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class CartServiceTest {
+class CartServiceTestUT {
 
     @Mock
     private CartRepository cartRepository;

@@ -11,7 +11,6 @@ import yummydelivery.server.repository.*;
 import yummydelivery.server.security.AuthenticationFacade;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CartService {
