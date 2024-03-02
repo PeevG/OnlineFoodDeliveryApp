@@ -9,6 +9,7 @@ import lombok.Setter;
 import yummydelivery.server.enums.FoodTypeEnum;
 
 import java.util.List;
+import java.util.Objects;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -28,4 +29,28 @@ public class UpdateFoodDTO {
     @NotNull
     private FoodTypeEnum foodTypeEnum;
     private List<String> ingredients;
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        UpdateFoodDTO that = (UpdateFoodDTO) object;
+        return grams == that.grams && Double.compare(price, that.price) == 0 && Objects.equals(name, that.name) && foodTypeEnum == that.foodTypeEnum && Objects.equals(ingredients, that.ingredients);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, grams, price, foodTypeEnum, ingredients);
+    }
+
+    @Override
+    public String toString() {
+        return "UpdateFoodDTO{" +
+                "name='" + name + '\'' +
+                ", grams=" + grams +
+                ", price=" + price +
+                ", foodTypeEnum=" + foodTypeEnum +
+                ", ingredients=" + ingredients +
+                '}';
+    }
 }

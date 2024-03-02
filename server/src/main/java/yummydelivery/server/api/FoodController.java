@@ -9,14 +9,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import yummydelivery.server.dto.ResponseDTO;
 import yummydelivery.server.dto.foodDTO.AddFoodDTO;
 import yummydelivery.server.dto.foodDTO.FoodDTO;
-import yummydelivery.server.dto.ResponseDTO;
 import yummydelivery.server.dto.foodDTO.UpdateFoodDTO;
 import yummydelivery.server.service.FoodService;
 import yummydelivery.server.utils.CommonUtils;
-
-
 
 import static yummydelivery.server.config.ApplicationConstants.API_BASE;
 
@@ -45,12 +43,14 @@ public class FoodController {
                                 .build()
                 );
     }
+
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Add new food. Admin role required!")
     @PostMapping()
     public ResponseEntity<ResponseDTO<Void>> addFood(@Valid @RequestPart("productInfo") AddFoodDTO addFoodDTO,
-                                                     @RequestPart(required = false) MultipartFile productImage,
-                                                     BindingResult bindingResult) {
+                                                     BindingResult bindingResult,
+                                                     @RequestPart(required = false) MultipartFile productImage
+    ) {
         if (bindingResult.hasErrors()) {
             String errors = utils.collectErrorMessagesToString(bindingResult);
             return ResponseEntity
@@ -91,6 +91,7 @@ public class FoodController {
                                 .build()
                 );
     }
+
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Delete food by Id. Admin role required!")
     @DeleteMapping("/{id}")
@@ -106,13 +107,14 @@ public class FoodController {
                                 .build()
                 );
     }
+
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Update food by Id. Admin role required!")
     @PatchMapping("/{id}")
     public ResponseEntity<ResponseDTO<Void>> updateFood(@PathVariable Long id,
                                                         @Valid @RequestPart UpdateFoodDTO updateFoodDTO,
-                                                        @RequestPart(required = false) MultipartFile productImage,
-                                                        BindingResult bindingResult) {
+                                                        BindingResult bindingResult,
+                                                        @RequestPart(required = false) MultipartFile productImage) {
         if (bindingResult.hasErrors()) {
             String errors = utils.collectErrorMessagesToString(bindingResult);
             return ResponseEntity
@@ -132,8 +134,9 @@ public class FoodController {
                         ResponseDTO
                                 .<Void>builder()
                                 .message("Food with id " + id + " is updated successfully")
-                                .statusCode(HttpStatus.CREATED.value())
+                                .statusCode(HttpStatus.OK.value())
                                 .build()
                 );
     }
+
 }
