@@ -52,7 +52,7 @@ public class BeverageController {
     @Operation(summary = "Get all beverages from the menu (Paginated)")
     @GetMapping
     public ResponseEntity<ResponseDTO<Page<BeverageView>>> getAllBeverages(@RequestParam(defaultValue = "0") int page) {
-        Page<BeverageView> beverageDTOS = beverageService.getAllBeverages(page - 1);
+        Page<BeverageView> beverageDTOS = beverageService.getAllBeverages(page);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(
@@ -72,9 +72,9 @@ public class BeverageController {
     public ResponseEntity<ResponseDTO<Void>> addBeverage(@RequestPart("beverageDTO")
                                                          @Valid
                                                          BeverageDTO beverageDTO,
+                                                         BindingResult bindingResult,
                                                          @RequestPart(value = "productImage", required = false)
-                                                         MultipartFile productImage,
-                                                         BindingResult bindingResult) {
+                                                         MultipartFile productImage) {
         if (bindingResult.hasErrors()) {
             String errors = utils.collectErrorMessagesToString(bindingResult);
             return ResponseEntity
@@ -98,6 +98,7 @@ public class BeverageController {
                                 .build()
                 );
     }
+
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Update beverage by Id. Admin role required!",
             description = "The content-Type of the JSON object must be configured as application/json. " +
@@ -105,8 +106,8 @@ public class BeverageController {
     @PatchMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ResponseDTO<Void>> updateBeverage(@PathVariable Long id,
                                                             @Valid @RequestPart BeverageDTO dto,
-                                                            @RequestPart(required = false) MultipartFile productImage,
-                                                            BindingResult bindingResult) {
+                                                            BindingResult bindingResult,
+                                                            @RequestPart(required = false) MultipartFile productImage) {
         if (bindingResult.hasErrors()) {
             String errors = utils.collectErrorMessagesToString(bindingResult);
             return ResponseEntity
@@ -121,15 +122,16 @@ public class BeverageController {
         }
         beverageService.updateBeverage(id, dto, productImage);
         return ResponseEntity
-                .status(HttpStatus.CREATED)
+                .status(HttpStatus.OK)
                 .body(
                         ResponseDTO
                                 .<Void>builder()
-                                .statusCode(HttpStatus.CREATED.value())
+                                .statusCode(HttpStatus.OK.value())
                                 .message("Beverage with id " + id + " is updated successfully")
                                 .build()
                 );
     }
+
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Delete beverage by Id. Admin role required!")
     @DeleteMapping("/{id}")

@@ -2,6 +2,7 @@ package yummydelivery.server.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -63,9 +64,8 @@ public class SecurityConfig {
                         "/swagger-ui/**",
                         "/swagger-ui.html",
                         "/v3/api-docs/**",
-                        "/webjars/**", "/swagger-resources/**",
-                        "/api/v1/foods",
-                        "/api/v1/beverages").permitAll()
+                        "/webjars/**", "/swagger-resources/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/foods/**", "/api/v1/beverages/**").permitAll()
                 .anyRequest().authenticated();
 
 

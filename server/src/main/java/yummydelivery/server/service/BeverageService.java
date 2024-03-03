@@ -93,6 +93,7 @@ public class BeverageService {
     }
 
     public Page<BeverageView> getAllBeverages(int page) {
+        if (page > 0) page -= 1;
         Page<BeverageEntity> beveragesPageable = productRepository.findAllBeveragesPageable(PageRequest.of(page, 6));
 
         List<BeverageView> viewList = beveragesPageable

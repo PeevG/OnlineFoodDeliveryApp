@@ -91,7 +91,6 @@ class AuthControllerTest {
         loginDTO.setPassword("ytrewq");
 
         String mockToken = "mockToken";
-        JwtResponseDTO mockJwtResponseDTO = new JwtResponseDTO(mockToken, "Bearer");
         when(authService.signInUser(any(SignInDTO.class))).thenReturn(mockToken);
 
         mockMvc.perform(MockMvcRequestBuilders
