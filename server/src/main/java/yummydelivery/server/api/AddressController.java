@@ -72,8 +72,9 @@ public class AddressController {
     @Operation(summary = "Update user address by address Id")
     @PutMapping("/{addressId}")
     public ResponseEntity<ResponseDTO<AddressDTO>> updateAddressById(@Valid @RequestBody AddressDTO addressDTO,
-                                                                     @PathVariable(name = "addressId") Long addressId,
-                                                                     BindingResult bindingResult) {
+                                                                     BindingResult bindingResult,
+                                                                     @PathVariable(name = "addressId") Long addressId
+                                                                     ) {
         if (bindingResult.hasErrors()) {
             String errors = utils.collectErrorMessagesToString(bindingResult);
             return ResponseEntity

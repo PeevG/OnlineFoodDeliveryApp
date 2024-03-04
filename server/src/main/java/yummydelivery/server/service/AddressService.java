@@ -37,7 +37,7 @@ public class AddressService {
         authenticationFacade.checkIfUserIsAuthenticated();
 
         UserEntity user = userService.getCurrentUserByUsername();
-        if(page > 0) page -= 1;
+        if (page > 0) page -= 1;
         return addressRepository.findAllAddressesByUserId(user.getId(), PageRequest.of(page, 6));
     }
 
@@ -54,7 +54,7 @@ public class AddressService {
         userAddresses.add(newAddress);
         user.setAddresses(userAddresses);
         userRepository.save(user);
-        return addressDTO;
+        return modelMapper.map(newAddress, AddressDTO.class);
     }
 
     public AddressDTO updateAddress(AddressDTO addressDTO, Long addressId) {

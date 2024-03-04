@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.util.Objects;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -30,4 +32,17 @@ public class AddressDTO {
     @Size(max = 20, message = "Phone number must be at most 20 characters")
     @NotNull(message = "Phone number is required")
     private String phoneNumber;
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        AddressDTO that = (AddressDTO) object;
+        return Objects.equals(city, that.city) && Objects.equals(streetName, that.streetName) && Objects.equals(streetNumber, that.streetNumber) && Objects.equals(phoneNumber, that.phoneNumber);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(city, streetName, streetNumber, phoneNumber);
+    }
 }
