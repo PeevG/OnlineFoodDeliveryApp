@@ -29,7 +29,6 @@ services:
       - CLOUDINARY_SECRET=${CLOUDINARY_API_SECRET}
       - EMAIL_SENDER=${SENDER_MAIL_ADDRESS}
       - EMAIL_SENDER_PASSWORD=${SENDER_MAIL_PASSWORD}
-    #      - SPRING_PROFILES_ACTIVE=docker
     ports:
       - "8080:8080"
     depends_on:
