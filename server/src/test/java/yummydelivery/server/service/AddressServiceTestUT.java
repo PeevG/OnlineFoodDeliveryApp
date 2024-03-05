@@ -179,6 +179,10 @@ class AddressServiceTestUT {
         userAddresses.add(newAddress);
 
         UserEntity user = new UserEntity();
+        user.setId(15L);
+        user.setFirstName("blabla");
+        user.setPassword("qlwekqwlekqwlek");
+        user.setLastName("Petrov");
         user.setEmail("current@email.com");
         user.setAddresses(userAddresses);
 
@@ -189,6 +193,7 @@ class AddressServiceTestUT {
         when(authentication.getName()).thenReturn("current@email.com");
         when(userService.getCurrentUserByUsername()).thenReturn(user);
         when(modelMapper.map(addressDTO, AddressEntity.class)).thenReturn(newAddress);
+        when(modelMapper.map(newAddress, AddressDTO.class)).thenReturn(addressDTO);
         when(addressRepository.getAddressEntitiesByUsername(anyString())).thenReturn(userAddresses);
 
         AddressDTO result = addressService.addNewAddress(addressDTO);

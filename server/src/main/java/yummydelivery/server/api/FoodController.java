@@ -1,6 +1,8 @@
 package yummydelivery.server.api;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -77,7 +79,8 @@ public class FoodController {
 
     @Operation(summary = "Get all foods by food type (Paginated)")
     @GetMapping()
-    public ResponseEntity<ResponseDTO<Page<FoodDTO>>> getFoodsByType(@RequestParam String foodType,
+    public ResponseEntity<ResponseDTO<Page<FoodDTO>>> getFoodsByType(@Parameter(description = "Pick one of the valid types of food:", in = ParameterIn.QUERY,
+            example = "pizza, pasta, risotto, salad, starter, dessert") @RequestParam String foodType,
                                                                      @RequestParam(defaultValue = "0") int page) {
 
         Page<FoodDTO> foodsByType = foodService.getAllFoodsByType(foodType, page);
