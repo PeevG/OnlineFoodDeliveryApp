@@ -143,9 +143,19 @@ class FoodControllerTest {
     @Test
     @WithMockUser(roles = "CUSTOMER")
     public void addFood_ShouldFail_Forbidden403() throws Exception {
+        AddFoodDTO addFoodDTO = new AddFoodDTO();
+        addFoodDTO.setName("Roma");
+        addFoodDTO.setFoodTypeEnum(FoodTypeEnum.PIZZA);
+        addFoodDTO.setGrams(550);
+        addFoodDTO.setPrice(15.00);
+
+        MockMultipartFile dtoMetaData = new MockMultipartFile("productInfo", "product",
+                MediaType.APPLICATION_JSON_VALUE,
+                objectMapper.writeValueAsString(addFoodDTO).getBytes());
 
         mockMvc.perform(MockMvcRequestBuilders
                         .multipart(API_BASE + "/foods")
+                        .file(dtoMetaData)
                         .contentType(MediaType.MULTIPART_FORM_DATA_VALUE))
                 .andExpect(status().isForbidden());
 
