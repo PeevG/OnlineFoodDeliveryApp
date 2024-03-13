@@ -2,6 +2,7 @@ package yummydelivery.server.dto.foodDTO;
 
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,6 +18,7 @@ import java.util.Objects;
 @Setter
 public class UpdateFoodDTO {
     @NotNull(message = "Name is required")
+    @Size(min = 2, max = 30, message = "Food name must be between 2 and 30 characters")
     private String name;
 
     @NotNull(message = "Weight is required")
