@@ -1,0 +1,24 @@
+<div class="container header">
+  <div class="brand">
+    <h1 routerLink="/">Yummy Delivery</h1>
+  </div>
+  <nav class="nav-links">
+    <ul>
+      <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a></li>
+      <li><a routerLink="/promotions" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Promotions</a>
+      </li>
+      <li><a routerLink="/login" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Login</a></li>
+      <li><a routerLink="/register" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Register</a>
+      </li>
+      <li><a routerLink="/userCart">
+        <mat-icon>
+          <span>shopping_cart</span>
+        </mat-icon>
+      </a></li>
+      <li><a routerLink="/userProfile">
+        <mat-icon>menu</mat-icon>
+      </a></li>
+    </ul>
+  </nav>
+</div>
+

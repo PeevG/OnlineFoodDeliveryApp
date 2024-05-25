@@ -1,0 +1,68 @@
+.container.header {
+  margin: 0;
+  background-color: rgba(5, 4, 4, 0.65); /* Light gray background */
+  padding: 5px 10px; /* Add some padding at the top and bottom */
+  border-bottom: 1px inset #a1a0a0;
+}
+
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.brand h1 {
+  font-size: 55px;
+  margin: 0; /* Remove default margin */
+  padding: 5px 20px;
+  color: #a1a0a0; /* Dark text color */
+}
+.brand h1:hover {
+  color: #d2d1d1; /* Change text color on hover */
+  transition: color 0.3s ease;
+  cursor: pointer;
+}
+
+nav ul {
+  list-style-type: none; /* Remove default bullet points */
+  margin: 0;
+  padding: 5px 30px;
+}
+
+nav ul li {
+  font-size: 1.7rem;
+  display: inline-block; /* Display navigation items horizontally */
+}
+
+/* Additional styles for mat-icon */
+nav ul li mat-icon {
+  font-size: 1.7rem; /* Match the font size of text items */
+  color: #a1a0a0; /* Match the text color */
+}
+
+nav ul li a:hover mat-icon {
+  color: #d2d1d1; /* Change icon color on hover */
+}
+
+nav ul li:not(:last-child) {
+  margin-right: 25px; /* Add some space between navigation items */
+}
+
+nav ul li a {
+  color: #a1a0a0; /* Dark text color */
+  text-decoration: none; /* Remove underline from links */
+  transition: color 0.3s ease; /* Add smooth color transition */
+}
+
+nav ul li a:hover {
+  color: #d2d1d1; /* Change text color on hover */
+}
+
+.nav-links {
+  margin-left: auto; /* Push navigation links to the right side */
+}
+
+.icon-shopping-cart{
+
+}
+
