@@ -13,7 +13,7 @@ import java.util.List;
 
 @Repository
 public interface AddressRepository extends JpaRepository<AddressEntity, Long> {
-    @Query("SELECT NEW yummydelivery.server.dto.view.AddressView(ua.id, ua.city, ua.phoneNumber, ua.streetName, ua.streetNumber) FROM UserEntity u JOIN u.addresses ua WHERE u.id = :userId")
+    @Query("SELECT NEW yummydelivery.server.dto.view.AddressView(ua.id, ua.city, ua.streetName, ua.streetNumber, ua.phoneNumber) FROM UserEntity u JOIN u.addresses ua WHERE u.id = :userId")
     Page<AddressView> findAllAddressesByUserId(@Param("userId") Long userId, Pageable pageable);
 
     @Query("SELECT NEW yummydelivery.server.model.AddressEntity(ua.id, ua.city, ua.streetName, ua.streetNumber, ua.phoneNumber) FROM UserEntity u JOIN u.addresses ua WHERE u.email = :userName")
