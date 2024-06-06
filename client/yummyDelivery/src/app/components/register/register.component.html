@@ -1,0 +1,150 @@
+<div>
+  <h2>Register</h2>
+  <form #registerForm="ngForm" (ngSubmit)="onFormSubmitted(registerForm)">
+  <div class="main-group">
+    <div class="first-group">
+      <div class="form-group">
+        <label for="firstName">First Name*</label>
+        <input
+          type="text"
+          id="firstName"
+          name="firstName"
+          ngModel
+          required
+          minlength="2"
+          maxlength="15"
+          #firstName="ngModel"
+          [ngClass]="{ 'is-invalid': firstName.invalid && (firstName.dirty || firstName.touched) }"
+        >
+        <div *ngIf="firstName.invalid && (firstName.dirty || firstName.touched)" class="error-messages">
+          <small *ngIf="firstName.errors?.['required']">First Name is required.</small>
+          <small *ngIf="firstName.errors?.['minlength']">First Name must be at least 2 characters long.</small>
+          <small *ngIf="firstName.errors?.['maxlength']">First Name cannot be more than 15 characters long.</small>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="lastName">Last Name*</label>
+        <input
+          type="text"
+          id="lastName"
+          name="lastName"
+          ngModel
+          required
+          minlength="2" maxlength="15"
+          #lastName="ngModel"
+        >
+        <div *ngIf="lastName.invalid && (lastName.dirty || lastName.touched)" class="error-messages">
+          <small *ngIf="lastName.errors?.['required']">Last Name is required.</small>
+          <small *ngIf="lastName.errors?.['minlength']">Last Name must be at least 2 characters long.</small>
+          <small *ngIf="lastName.errors?.['maxlength']">Last Name cannot be more than 15 characters long.</small>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="email">Email*</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          [(ngModel)]="emailValue"
+          required
+          email
+          #emailInput="ngModel"
+          (ngModelChange)="updateEmail($event)"
+        >
+        <div *ngIf="emailInput.invalid && (emailInput.dirty || emailInput.touched)" class="error-messages">
+          <small *ngIf="emailInput.errors?.['required']">Email is required.</small>
+          <small *ngIf="emailInput.errors?.['email']">Invalid email address.</small>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="password">Password*</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          ngModel
+          required
+          minlength="6"
+          #password="ngModel"
+        >
+        <div *ngIf="password.invalid && (password.dirty || password.touched)" class="error-messages">
+          <small *ngIf="password.errors?.['required']">Password is required.</small>
+          <small *ngIf="password.errors?.['minlength']">Password must be at least 6 characters long.</small>
+        </div>
+      </div>
+    </div>
+    <div class="second-group">
+      <div class="form-group">
+        <label for="city">City*</label>
+        <input
+          type="text"
+          id="city"
+          name="city"
+          ngModel
+          required
+          minlength="2" maxlength="25"
+          #city="ngModel"
+        >
+        <div *ngIf="city.invalid && (city.dirty || city.touched)" class="error-messages">
+          <small *ngIf="city.errors?.['required']">City is required.</small>
+          <small *ngIf="city.errors?.['minlength']">City must be at least 2 characters long.</small>
+          <small *ngIf="city.errors?.['maxlength']">City cannot be more than 25 characters long.</small>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="streetName">Street Name*</label>
+        <input
+          type="text"
+          id="streetName"
+          name="streetName"
+          ngModel
+          required
+          minlength="2" maxlength="25"
+          #streetName="ngModel"
+        >
+        <div *ngIf="streetName.invalid && (streetName.dirty || streetName.touched)" class="error-messages">
+          <small *ngIf="streetName.errors?.['required']">Street Name is required.</small>
+          <small *ngIf="streetName.errors?.['minlength']">Street Name must be at least 2 characters long.</small>
+          <small *ngIf="streetName.errors?.['maxlength']">Street Name cannot be more than 25 characters long.</small>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="streetNumber">Street Number*</label>
+        <input
+          type="text"
+          id="streetNumber"
+          name="streetNumber"
+          ngModel
+          required
+          #streetNumber="ngModel"
+        >
+        <div *ngIf="streetNumber.invalid && (streetNumber.dirty || streetNumber.touched)" class="error-messages">
+          <small *ngIf="streetNumber.errors?.['required']">Street Number is required.</small>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="phoneNumber">Phone Number*</label>
+        <input
+          type="text"
+          id="phoneNumber"
+          name="phoneNumber"
+          required
+          ngModel
+          pattern="^\+?[0-9]{5,15}$"
+          #phoneNumber="ngModel"
+        >
+        <div *ngIf="phoneNumber.invalid && (phoneNumber.dirty || phoneNumber.touched)" class="error-messages">
+          <small *ngIf="phoneNumber.errors?.['required']">Phone Number is required.</small>
+          <small *ngIf="phoneNumber.errors?.['pattern']">Invalid phone number format.</small>
+        </div>
+      </div>
+    </div>
+  </div>
+  <button
+    type="submit"
+    [disabled]="registerForm.invalid"
+  >Register</button>
+</form>
+ <!-- <button (click)="testError()">Test Error Dialog</button>
+  <button (click)="testRegister()">Test register</button>-->
+</div>

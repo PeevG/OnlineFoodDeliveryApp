@@ -1,44 +1,51 @@
 .sidebar {
-  //padding: 20px;
-  //height: 80vh;
   width: 100%;
   height: 100%;
-  display: flex;
-  flex-direction: column; /* Set flex direction to column */
-  justify-content: center;
-  align-items: center;
   border-right: 1px solid #a1a0a0;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: center;
 }
 
 .sidebar::-webkit-scrollbar {
-  display: none; /* Hide scrollbar in WebKit browsers (e.g., Chrome, Safari) */
+  display: none; /* Hide scrollbar in WebKit browsers (Chrome, Safari) */
   scrollbar-width: none; /* Hide scrollbar in Mozilla */
 }
 
 .food-types-list {
+  text-align: start;
   list-style-type: none;
+  margin-top: 20px;
   padding: 0;
-  margin-bottom: 50%;
-}
-a {
-  color: #a1a0a0;
-  text-decoration: none; /* Remove underline from links */
-  transition: color 0.3s ease; /* Add smooth color transition */
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.sidebar ul li{
-  padding-left: 35px;
-  margin-top: 15px;
-  margin-bottom: 15px;
+a {
+  display: inline-block;
+  width: 100%;
+  padding: 5px 60px;
+  color: #a1a0a0;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.sidebar ul li {
+  margin: 10px 0;
   cursor: pointer;
   color: #a1a0a0;
-  font-size: 2.2rem;
-  text-decoration:none;
+  font-size: 1.8rem;
   transition: color 0.3s ease;
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 .sidebar ul li a:hover {
   color: #d2d1d1;
 }
-
