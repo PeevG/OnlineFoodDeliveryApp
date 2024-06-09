@@ -1,0 +1,38 @@
+<div class="login-container">
+  <h2>Login</h2>
+  <form #authForm="ngForm" (ngSubmit)="onFormSubmitted(authForm)">
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email"
+             id="email"
+             name="email"
+             [(ngModel)]="emailValue"
+             required
+             email
+             #emailInput="ngModel"
+             (ngModelChange)="updateEmail($event)"
+      >
+      <div *ngIf="emailInput.invalid && (emailInput.dirty || emailInput.touched)" class="error-messages">
+        <small *ngIf="emailInput.errors?.['required']">Email is required.</small>
+        <small *ngIf="emailInput.errors?.['email']">Invalid email address.</small>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input
+        type="password"
+        id="password"
+        name="password"
+        ngModel
+        required
+        minlength="6"
+        #password="ngModel"
+      >
+      <div *ngIf="password.invalid && (password.dirty || password.touched)" class="error-messages">
+        <small *ngIf="password.errors?.['required']">Password is required.</small>
+        <small *ngIf="password.errors?.['minlength']">Password must be at least 6 characters long.</small>
+      </div>
+    </div>
+    <button type="submit" [disabled]="authForm.invalid">Login</button>
+  </form>
+</div>

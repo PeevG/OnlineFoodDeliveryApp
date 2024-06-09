@@ -1,0 +1,72 @@
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+h2 {
+  color: #d2d1d1;
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.form-group {
+  margin-bottom: 20px;
+  color: #a1a0a0;
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+}
+
+label {
+  margin-bottom: 5px;
+}
+
+input[type="email"],
+input[type="password"] {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+button {
+  padding: 10px 20px;
+  background-color: #4caf50;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 20px;
+  margin-top: 20px;
+  width: 100%;
+  max-width: 200px;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+.is-invalid {
+  border-color: red;
+}
+
+.error-messages {
+  color: red;
+  margin-top: 2px;
+}
+
+input.ng-invalid.ng-touched,
+input.is-invalid {
+  border-color: red;
+}

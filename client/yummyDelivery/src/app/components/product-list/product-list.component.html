@@ -1,0 +1,13 @@
+<div class="products-list" >
+  <h2 class="product-type">{{ isBeverages ? 'Beverage' : foodType || 'Welcome, enjoy your meal'}}</h2>
+  <ul>
+    <li *ngFor="let product of products.content | paginate: { itemsPerPage: products.size, currentPage: products.number + 1, totalItems: products.totalElements} ">
+      <product [product]="product" [isBeverage]="isBeverages"></product>
+    </li>
+  </ul>
+  <div class="my-pagination">
+    <pagination-controls (pageChange)="onPageChange($event)"></pagination-controls>
+  </div>
+</div>
+
+
