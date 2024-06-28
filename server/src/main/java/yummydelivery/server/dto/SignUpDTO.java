@@ -18,6 +18,7 @@ public class SignUpDTO {
     @Size(min = 6, message = "Password size must be minimum 6 characters")
     private String password;
 
+    @NotBlank(message = "First name is required")
     @Size(min = 2, max = 15, message = "First name must be between 2 and 15 characters")
     private String firstName;
 

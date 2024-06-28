@@ -20,7 +20,7 @@ public class UpdatePasswordDTO {
     @Size(min = 6, message = "New password size must be minimum 6 characters")
     private String newPassword;
 
-    @NotNull(message = "New password is required")
-    @Size(min = 6, message = "New password size must be minimum 6 characters")
+    @NotNull(message = "Repeat new password is required")
+    @Size(min = 6, message = "Repeat new password size must be minimum 6 characters")
     private String repeatNewPassword;
 }

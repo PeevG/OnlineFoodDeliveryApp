@@ -14,12 +14,14 @@ import yummydelivery.server.exceptions.AddressNotFoundException;
 import yummydelivery.server.exceptions.UserNotFoundException;
 import yummydelivery.server.model.*;
 import yummydelivery.server.repository.AddressRepository;
+import yummydelivery.server.repository.CartRepository;
 import yummydelivery.server.repository.OrderRepository;
 import yummydelivery.server.repository.UserRepository;
 import yummydelivery.server.security.AuthenticationFacade;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -28,14 +30,18 @@ public class OrderService {
     private final UserRepository userRepository;
     private final AddressRepository addressRepository;
     private final AuthenticationFacade authenticationFacade;
+    private final CartRepository cartRepository;
     private final ModelMapper modelMapper;
 
-    public OrderService(OrderRepository orderRepository, UserRepository userRepository, AddressRepository addressRepository, AuthenticationFacade authenticationFacade, ModelMapper modelMapper) {
+    public OrderService(OrderRepository orderRepository, UserRepository userRepository,
+                        AddressRepository addressRepository, AuthenticationFacade authenticationFacade,
+                        ModelMapper modelMapper, CartRepository cartRepository) {
         this.orderRepository = orderRepository;
         this.userRepository = userRepository;
         this.addressRepository = addressRepository;
         this.authenticationFacade = authenticationFacade;
         this.modelMapper = modelMapper;
+        this.cartRepository = cartRepository;
     }
 
     public void createOrder(Long addressId) {
@@ -55,7 +61,7 @@ public class OrderService {
     public Page<OrderView> getUserOrders(int page) {
         if (page > 0) page -= 1;
         UserEntity currentUser = userRepository.findByEmail(authenticationFacade.getAuthentication().getName())
-                .orElseThrow(() -> new UserNotFoundException(HttpStatus.NOT_FOUND,"User not found"));
+                .orElseThrow(() -> new UserNotFoundException(HttpStatus.NOT_FOUND, "User not found"));
 
         Page<OrderEntity> ordersPageable = orderRepository.findAllByUserId(currentUser.getId(), PageRequest.of(page, 6));
         List<OrderView> mappedOrders = ordersPageable
@@ -67,9 +73,11 @@ public class OrderService {
         return new PageImpl<>(mappedOrders, ordersPageable.getPageable(), ordersPageable.getTotalElements());
     }
 
-    protected static void clearUserShoppingCart(UserEntity currentUser) {
-        currentUser.getCart().getCartItems().clear();
-        currentUser.getCart().setCartPrice(0.0);
+    protected void clearUserShoppingCart(UserEntity currentUser) {
+        ShoppingCartEntity userCart = currentUser.getCart();
+        userCart.getCartItems().clear();
+        userCart.setCartPrice(0.0);
+        cartRepository.save(userCart);
     }
 
     private UserEntity getCurrentUserWithOrders() {
@@ -84,9 +92,11 @@ public class OrderService {
         newOrder.setOrderCost(currentUser.getCart().getCartPrice());
         newOrder.setDeliveryAddress(address);
         newOrder.setStatus(OrderStatusEnum.PROCESSING);
-        List<CartItem> cartProducts = currentUser.getCart()
-                .getCartItems();
-        newOrder.setOrderedProducts(cartProducts);
+
+        List<ImmutableCartItem> orderedItems = currentUser.getCart().getCartItems()
+                .stream()
+                .map(cartItem -> modelMapper.map(cartItem, ImmutableCartItem.class)).toList();
+        newOrder.setOrderedProducts(orderedItems);
         return newOrder;
     }
 

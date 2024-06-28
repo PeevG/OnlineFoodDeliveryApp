@@ -5,10 +5,8 @@ import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.scheduling.annotation.Scheduled;
 import yummydelivery.server.enums.OrderStatusEnum;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,11 +32,10 @@ public class OrderEntity {
     @Enumerated
     private OrderStatusEnum status;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "order_cart_items",
-            joinColumns = @JoinColumn(name = "order_id"),
-            inverseJoinColumns = @JoinColumn(name = "cart_item_id"))
-    private List<CartItem> orderedProducts = new ArrayList<>();
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "order_cart_item_records", joinColumns = @JoinColumn(name = "order_id"))
+    private List<ImmutableCartItem> orderedProducts = new ArrayList<>();
+
     @ManyToOne(fetch = FetchType.EAGER)
     private AddressEntity deliveryAddress;
 }

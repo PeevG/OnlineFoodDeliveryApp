@@ -8,11 +8,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import yummydelivery.server.enums.ProductTypeEnum;
 
+import java.io.Serializable;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-public class ProductView {
+public class ProductView implements Serializable {
     private Long id;
     private String name;
     private double price;

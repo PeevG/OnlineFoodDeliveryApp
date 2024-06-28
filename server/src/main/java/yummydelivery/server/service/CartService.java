@@ -11,6 +11,7 @@ import yummydelivery.server.repository.*;
 import yummydelivery.server.security.AuthenticationFacade;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CartService {
@@ -40,8 +41,10 @@ public class CartService {
         ShoppingCartEntity shoppingCartEntity = user.getCart();
         CartItem cartItem = findItemInShoppingCart(shoppingCartEntity.getCartItems(), productId);
 
+        Optional<CartItem> cartItemOptional = cartItemRepository.findByProductId(productId);
+
         if (cartItem == null) {
-            cartItem = new CartItem();
+            cartItem = cartItemOptional.orElseGet(CartItem::new);
             cartItem.setProduct(product);
             cartItem.setQuantity(1);
             shoppingCartEntity.getCartItems().add(cartItem);
@@ -78,7 +81,7 @@ public class CartService {
         userCart.getCartItems().remove(itemToRemove);
 
         userCart.setCartPrice(getShoppingCartTotalPrice(userCart));
-        cartItemRepository.delete(itemToRemove);
+        //cartItemRepository.delete(itemToRemove);
         userRepository.save(user);
     }
 

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.Map;
 
 @Component
 public class JwtTokenProvider {
@@ -23,8 +24,11 @@ public class JwtTokenProvider {
 
     public String generateJwtToken(Authentication authentication) {
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+        Map<String, Object> claims = Map.of("roles", userPrincipal.getAuthorities());
+
         String token = Jwts.builder()
-                .setSubject((userPrincipal.getUsername()))
+                .setClaims(claims)
+                .setSubject(userPrincipal.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date((new Date().getTime() + jwtExpirationMs)))
                 .signWith(getKey())
