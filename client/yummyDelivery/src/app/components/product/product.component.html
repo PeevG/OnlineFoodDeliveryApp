@@ -1,0 +1,34 @@
+<div class="product-container" *ngIf="!isBeverage; else beverageTemplate">
+  <img class="product-image" [src]="food?.imageURL || 'assets/media/default-product-image.png'" alt="Product Image">
+  <div class="product-details">
+    <div class="product-info">
+      <p class="product-name">{{ food?.name }}</p>
+      <p class="product-price">{{ food?.price | currency: 'USD': 'symbol' }}</p>
+    </div>
+    <p class="product-ingredients">{{ food?.ingredients?.join(', ') }}</p>
+    <div class="additional-details">
+      <p class="grams">{{ food?.grams }} grams</p>
+      <button class="add-to-cart-button" type="button" (click)="addProductToCart(food?.id)"> <mat-icon>shopping_cart</mat-icon> Add to cart</button>
+    </div>
+  </div>
+</div>
+
+<ng-template #beverageTemplate>
+  <div class="product-container">
+    <img class="product-image" [src]="beverage?.imageURL || 'assets/media/default-product-image.png'"
+         alt="Beverage Image">
+    <div class="product-details">
+      <div class="product-info">
+        <p class="product-name">{{ beverage?.name }}</p>
+        <p class="product-price">{{ beverage?.price | currency: 'USD': 'symbol' }}</p>
+      </div>
+      <div class="additional-details">
+        <p class="milliliters">{{ beverage?.milliliters }} ml</p>
+        <button class="add-to-cart-button" type="button" (click)="addProductToCart(beverage?.id)"><mat-icon>shopping_cart</mat-icon> Add to cart</button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+
+
