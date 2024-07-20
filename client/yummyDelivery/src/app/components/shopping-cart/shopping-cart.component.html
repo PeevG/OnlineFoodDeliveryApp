@@ -1,0 +1,31 @@
+<div class="cart-container">
+  <h1>Your order</h1>
+  <ul>
+    <li *ngFor="let cartItem of cartItems">
+      <div class="cart-item">
+        <div class="product-details-one">
+          <img [src]="cartItem.product.imageURL" alt="{{ cartItem.product.name }}" class="product-image">
+          <div>
+            <h3>{{ cartItem.product.name }}</h3>
+            <p>Price: {{ cartItem.product.price | currency: 'USD': 'symbol'}}</p>
+          </div>
+        </div>
+        <div class="product-details-two">
+          <p class="quantity">Quantity: {{ cartItem.quantity }}</p>
+          <p class="total-price">Total Price: {{ cartItem.price | currency: 'USD': 'symbol'}}</p>
+          <button (click)="removeCartItem(cartItem.id)">
+            <mat-icon>cancel</mat-icon>
+            Remove product
+          </button>
+        </div>
+      </div>
+    </li>
+  </ul>
+  <div class="button-container">
+    <p class="order-cost">Order cost: {{ cartPrice | currency: 'USD': 'symbol' }}</p>
+    <button class="order-button" routerLink="pick-address">
+      <mat-icon>check_box</mat-icon>
+      Pick address
+    </button>
+  </div>
+</div>

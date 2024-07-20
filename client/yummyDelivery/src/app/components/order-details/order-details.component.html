@@ -1,0 +1,38 @@
+<div class="order-container">
+  <h1>Order Details</h1>
+  <div class="ordered-products">
+    <ul>
+      <li *ngFor="let cartItem of cartItems">
+        <div class="cart-item">
+          <div class="product-details-one">
+            <img [src]="cartItem.product.imageURL" alt="{{ cartItem.product.name }}" class="product-image">
+            <div>
+              <h3>{{ cartItem.product.name }}</h3>
+              <p>Price: {{ cartItem.product.price | currency: 'USD': 'symbol'}}</p>
+            </div>
+          </div>
+          <div class="product-details-two">
+            <p class="quantity">Quantity: {{ cartItem.quantity }}</p>
+            <p class="total-price">Total Price: {{ cartItem.price | currency: 'USD': 'symbol'}}</p>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+  <div class="address-container">
+    <h2>Address:</h2>
+    <p>{{ orderAddress.city }}, {{ orderAddress.streetName }}, {{ orderAddress.streetNumber }}
+      , {{ orderAddress.phoneNumber }}</p>
+  </div>
+  <div class="promotions-container">
+  </div>
+  
+  <div class="button-container" >
+    <p class="order-cost" *ngIf="!isOrderHistory">Order cost: {{ cartPrice | currency: 'USD': 'symbol' }}</p>
+    <p class="order-cost" *ngIf="isOrderHistory">Order cost: {{ orderCost | currency: 'USD': 'symbol' }}</p>
+    <button (click)="createOrder()" *ngIf="!isOrderHistory">
+      <mat-icon>shopping_cart_checkout</mat-icon>
+      Finish Order
+    </button>
+  </div>
+</div>
