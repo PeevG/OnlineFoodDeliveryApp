@@ -1,0 +1,84 @@
+<div class="container" *ngIf="isPickAddressForm; else defaultTemplate">
+  <h2>Address Management</h2>
+  <table class="address-table">
+    <thead>
+    <tr>
+      <th>City</th>
+      <th>Street Name</th>
+      <th>Str. Number</th>
+      <th>Phone Number</th>
+      <th>Choose Address</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr
+      *ngFor="let address of addressesArray | paginate: { itemsPerPage: addresses.size, currentPage: addresses.number + 1, totalItems: addresses.totalElements} "
+      [class.active]="selectedAddressId === address.id"
+      (click)="selectAddress(address.id)">
+      <td>{{ address.city }}</td>
+      <td>{{ address.streetName }}</td>
+      <td>{{ address.streetNumber }}</td>
+      <td>{{ address.phoneNumber }}</td>
+      <td>
+        <mat-radio-group [value]="address.id" [(ngModel)]="selectedAddressId">
+          <mat-radio-button [value]="address.id"></mat-radio-button>
+        </mat-radio-group>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+  <div class="confirm-button">
+    <button (click)="confirmAddress()" [disabled]="!selectedAddressId">
+      <mat-icon>check_circle</mat-icon>
+      Confirm Address
+    </button>
+  </div>
+  <div class="my-pagination">
+    <pagination-controls (pageChange)="onPageChange($event)"></pagination-controls>
+  </div>
+</div>
+
+<ng-template #defaultTemplate>
+  <div class="container">
+    <h2>Address Management</h2>
+    <table class="address-table">
+      <thead>
+      <tr>
+        <th>City</th>
+        <th>Street Name</th>
+        <th>Str. Number</th>
+        <th>Phone Number</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr
+        *ngFor="let address of addressesArray | paginate: { itemsPerPage: addresses.size, currentPage: addresses.number + 1, totalItems: addresses.totalElements} ">
+        <td>{{ address.city }}</td>
+        <td>{{ address.streetName }}</td>
+        <td>{{ address.streetNumber }}</td>
+        <td>{{ address.phoneNumber }}</td>
+        <td class="buttons">
+          <button [routerLink]="['update-address', address.id]" [state]="{ address: address }">
+            <mat-icon>edit_note</mat-icon>
+            Update Address
+          </button>
+          <button (click)="onDeleteAddress(address.id)">
+            <mat-icon>delete</mat-icon>
+            Delete Address
+          </button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+    <div class="buttons-two">
+      <button class="add-button" routerLink="add-address">
+        <mat-icon>add_circle</mat-icon>
+        Add new address
+      </button>
+    </div>
+    <div class="my-pagination">
+      <pagination-controls (pageChange)="onPageChange($event)"></pagination-controls>
+    </div>
+  </div>
+</ng-template>

@@ -1,0 +1,76 @@
+<div>
+  <h2>New address</h2>
+  <form #addAddress="ngForm" (ngSubmit)="onFormSubmitted(addAddress)">
+    <div class="main-group">
+      <div class="first-group">
+        <div class="form-group">
+          <label for="city">City*</label>
+          <input
+            type="text"
+            id="city"
+            name="city"
+            ngModel
+            required
+            minlength="2" maxlength="25"
+            #city="ngModel"
+          >
+          <div *ngIf="city.invalid && (city.dirty || city.touched)" class="error-messages">
+            <small *ngIf="city.errors?.['required']">City is required.</small>
+            <small *ngIf="city.errors?.['minlength']">City must be at least 2 characters long.</small>
+            <small *ngIf="city.errors?.['maxlength']">City cannot be more than 25 characters long.</small>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="streetName">Street Name*</label>
+          <input
+            type="text"
+            id="streetName"
+            name="streetName"
+            ngModel
+            required
+            minlength="2" maxlength="25"
+            #streetName="ngModel"
+          >
+          <div *ngIf="streetName.invalid && (streetName.dirty || streetName.touched)" class="error-messages">
+            <small *ngIf="streetName.errors?.['required']">Street Name is required.</small>
+            <small *ngIf="streetName.errors?.['minlength']">Street Name must be at least 2 characters long.</small>
+            <small *ngIf="streetName.errors?.['maxlength']">Street Name cannot be more than 25 characters long.</small>
+          </div>
+        </div>
+      </div>
+      <div class="second-group">
+        <div class="form-group">
+          <label for="phoneNumber">Phone Number*</label>
+          <input
+            type="text"
+            id="phoneNumber"
+            name="phoneNumber"
+            required
+            ngModel
+            pattern="^\+?[0-9]{5,15}$"
+            #phoneNumber="ngModel"
+          >
+          <div *ngIf="phoneNumber.invalid && (phoneNumber.dirty || phoneNumber.touched)" class="error-messages">
+            <small *ngIf="phoneNumber.errors?.['required']">Phone Number is required.</small>
+            <small *ngIf="phoneNumber.errors?.['pattern']">Invalid phone number format.</small>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="streetNumber">Street Number*</label>
+          <input
+            type="text"
+            id="streetNumber"
+            name="streetNumber"
+            ngModel
+            required
+            #streetNumber="ngModel"
+          >
+          <div *ngIf="streetNumber.invalid && (streetNumber.dirty || streetNumber.touched)" class="error-messages">
+            <small *ngIf="streetNumber.errors?.['required']">Street Number is required.</small>
+          </div>
+        </div>
+      </div>
+    </div>
+    <button type="submit" [disabled]="addAddress.invalid">Add</button>
+  </form>
+</div>

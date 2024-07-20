@@ -1,0 +1,78 @@
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.main-group {
+  display: flex;
+  width: 100%;
+  justify-content: space-evenly;
+}
+
+
+h2 {
+  color: #a1a0a0;
+  font-size: 2rem;
+  text-align: center;
+}
+
+.form-group {
+  margin-bottom: 20px;
+  color: #a1a0a0;
+  display: flex;
+  width: 350px;
+  flex-direction: column;
+}
+
+.is-invalid {
+  border-color: red;
+}
+
+.error-messages {
+  color: red;
+  margin-top: 2px;
+}
+
+input.ng-invalid.ng-touched {
+  border-color: red;
+}
+
+.server-error-message {
+  color: red;
+  margin-bottom: 20px;
+}
+
+label {
+  margin-bottom: 5px;
+  width: 100%;
+  display: flex; /* Enable flexbox for label */
+  align-items: center; /* Center text vertically */
+  justify-content: left; /* Center text horizontally */
+
+}
+
+input[type="text"] {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+button {
+  padding: 15px 30px;
+  background-color: #4caf50;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 20px;
+  width: 100%;
+  max-width: 200px;
+  margin-top: 20px;
+}
+
+button:hover {
+  background-color: #45a049;
+}

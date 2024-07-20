@@ -1,0 +1,184 @@
+.container {
+  max-width: 80%;
+  max-height: 80%;
+  margin: 20px auto;
+  padding: 20px;
+  color: #f0f0f0;
+  border-radius: 8px;
+  border: 1px solid #a1a0a0;
+  overflow-y: auto;
+}
+
+h2, h3 {
+  text-align: center;
+  font-size: 2rem;
+  color: #d2d1d1;
+}
+
+.buttons {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.buttons-two {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+}
+
+.confirm-button {
+  display: flex;
+  margin: 5px 0;
+  justify-content: right;
+}
+
+button {
+  display: flex;
+  align-items: center;
+  padding: 5px 10px;
+  margin: 3px 3px 3px 3px;
+  font-size: 15px;
+  background-color: #4caf50;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button mat-icon {
+  margin-right: 5px;
+}
+
+.add-button {
+  padding: 10px 10px;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+.form-container {
+  margin: 20px 0;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  color: #f0f0f0;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+  background-color: #444;
+  color: #f0f0f0;
+  border: 1px solid #666;
+  border-radius: 4px;
+}
+
+.address-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.address-table th, .address-table td {
+  border: 1px solid #555;
+  color: #f0f0f0;
+}
+
+.address-table th {
+  padding: 10px;
+  background-color: rgba(68, 68, 68, 0.94);
+}
+
+.address-table td {
+  text-align: center;
+}
+
+.address-table tr:hover {
+  background-color: #5a5a5a;
+}
+
+.active {
+  background-color: #5a5a5a;
+}
+
+.container::-webkit-scrollbar {
+  display: none; /* Hide scrollbar in WebKit browsers (e.g., Chrome, Safari) */
+  scrollbar-width: none; /* Hide scrollbar in Mozilla */
+}
+
+.my-pagination {
+  display: flex;
+  justify-content: center;
+}
+
+.my-pagination::ng-deep .ngx-pagination li {
+  border-radius: 5px !important;
+  background-color: rgba(79, 79, 79, 0.76);
+}
+
+.product-type {
+  color: #a1a0a0;
+  text-align: center;
+  font-size: 2rem;
+  margin: 0;
+  padding-top: 10px;
+}
+
+.confirm-button button[disabled] {
+  background-color: #4caf50; /* Change background color */
+  cursor: not-allowed; /* Change cursor */
+}
+
+.confirm-button button[disabled]:hover {
+  background-color: #a11e21; /* Change hover color */
+}
+//How to change the colors of this radio button ????
+::ng-deep .mat-radio-button {
+  position: relative;
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+::ng-deep .mat-radio-button input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+// Radio button styling doesnt work
+//::ng-deep .mat-radio-outer-circle {
+//  width: 18px; /* Adjust outer circle size */
+//  height: 18px; /* Adjust outer circle size */
+//  border-radius: 50%;
+//  border: 2px solid #666; /* Adjust border color */
+//}
+//
+//::ng-deep .mat-radio-inner-circle {
+//  width: 10px; /* Adjust inner circle size */
+//  height: 10px; /* Adjust inner circle size */
+//  border-radius: 50%;
+//  background-color: #666; /* Adjust inner circle color */
+//  position: absolute;
+//  top: 50%;
+//  left: 50%;
+//  transform: translate(-50%, -50%);
+//  transition: background-color 0.2s ease-in-out;
+//}
+//
+///* Styling when radio button is checked */
+//::ng-deep .mat-radio-button.mat-radio-checked .mat-radio-outer-circle {
+//  border-color: #4caf50; /* Adjust outer circle color when checked */
+//}
+//
+//::ng-deep .mat-radio-button.mat-radio-checked .mat-radio-inner-circle {
+//  background-color: #4caf50; /* Adjust inner circle color when checked */
+//}
